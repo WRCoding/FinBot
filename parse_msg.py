@@ -21,14 +21,16 @@ def parse_msg_xml(content):
     try:
         response = ai_manager.generate(content)
         data = json.loads(response.content)
-        print("OpenAI response:", response.content)
-        if data['publisher'] and not data['publisher'].endswith('银行') and data['标题'] != '交易提醒':
-            print("不符合条件，跳过解析。")
-            return None
-        data['transaction_time'] = datetime.now().strftime('%Y年%m月%d日 %H:%M:%S')
-        data.pop('标题')
-        service = TransactionService()
-        service.create(data)
+        print("response:", response.content)
+        if data['publisher'] and data['publisher'].endswith('银行') and data['标题'] == '交易提醒':
+            data['transaction_time'] = datetime.now().strftime('%Y年%m月%d日 %H:%M:%S')
+            data.pop('标题')
+            service = TransactionService()
+            service.create(data)
+            return data
+        print("不符合条件，跳过解析。")
+        return None
+
     except Exception as e:
         print(f"Error with : {str(e)}")
     # 判断条件

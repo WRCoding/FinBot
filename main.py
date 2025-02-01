@@ -3,10 +3,11 @@ import signal
 from fastapi import FastAPI
 from wcferry import Wcf
 
+from db import init_db
 from finbot import FinBot
 
 app = FastAPI()
-
+init_db()
 def start_fin_bot():
     wcf = Wcf(debug=True)
 
