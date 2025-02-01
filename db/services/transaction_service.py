@@ -90,6 +90,18 @@ class TransactionService(BaseDBService[Transaction]):
             for obj in result:
                 db.refresh(obj)  # 刷新每个对象以加载所有属性
             return result
+
+    def get_all_transactions(self) -> List[Transaction]:
+        """获取最新的交易记录"""
+        with get_db() as db:
+            stmt = (
+                select(self.model)
+                .order_by(self.model.transaction_time.desc())
+            )
+            result = list(db.scalars(stmt))
+            for obj in result:
+                db.refresh(obj)  # 刷新每个对象以加载所有属性
+            return result
     
     def get_publisher_transaction_count(self, publisher: str) -> int:
         """获取发布者的交易总数"""

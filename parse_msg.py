@@ -35,6 +35,12 @@ def parse_msg_xml(content):
         print(f"Error with : {str(e)}")
     # 判断条件
 
+def parse_msg_self(content):
+    service = TransactionService()
+    data = service.get_all_transactions()
+    for t in data:
+        print(f"type: {t.type}, 发布者: {t.publisher}, 金额: {t.amount}, 时间: {t.transaction_time}, 备注: {t.remark}")
+
 #
 # if __name__ == '__main__':
 #     with open('msg.xml', mode='r', encoding='utf-8') as f:
