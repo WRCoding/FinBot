@@ -34,7 +34,7 @@ class FinBot:
         content = msg.content if msg.type == 1 else ''
         print(f'id: {msg.id}, sender: {msg.sender}, type: {msg.type}, content: {content}')
         if msg.type == 1 and wcf.get_self_wxid() == msg.sender:
-            parse_msg_self(msg.content)
+            parse_msg_self(msg.content, wcf)
         if msg.type == 49:
             parse_msg_xml(msg.content)
 
