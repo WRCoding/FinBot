@@ -48,7 +48,6 @@ class FinBot:
                     self.LOG.info(msg)
                     self.processMsg(msg)
                 except Empty:
-                    self.LOG.error('Empty msg')
                     continue  # Empty message
                 except Exception as e:
                     self.LOG.error(f"Receiving message error: {e}")
