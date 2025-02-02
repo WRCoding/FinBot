@@ -23,7 +23,7 @@ class FinBot:
         self.allContacts = self.getAllContacts()
 
 
-    def processMsg(self, msg: WxMsg, wcf: Wcf) -> None:
+    def processMsg(self, msg: WxMsg) -> None:
         """当接收到消息的时候，会调用本方法。如果不实现本方法，则打印原始消息。
         此处可进行自定义发送的内容,如通过 msg.content 关键字自动获取当前天气信息，并发送到对应的群组@发送者
         群号：msg.roomid  微信ID：msg.sender  消息内容：msg.content
@@ -33,8 +33,8 @@ class FinBot:
         """
         content = msg.content if msg.type == 1 else ''
         print(f'id: {msg.id}, sender: {msg.sender}, type: {msg.type}, content: {content}')
-        if msg.type == 1 and wcf.get_self_wxid() == msg.sender:
-            parse_msg_self(msg.content)
+        if msg.type == 1 and self.wxid == msg.sender:
+            parse_msg_self(msg.content, self.wcf)
         if msg.type == 49:
             parse_msg_xml(msg.content)
 
@@ -44,7 +44,7 @@ class FinBot:
                 try:
                     msg = wcf.get_msg()
                     # self.LOG.info(msg)
-                    self.processMsg(msg, wcf)
+                    self.processMsg(msg)
                 except Empty:
                     continue  # Empty message
                 except Exception as e:
