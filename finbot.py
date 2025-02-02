@@ -31,10 +31,11 @@ class FinBot:
         receivers = msg.roomid
         self.sendTextMsg(content, receivers, msg.sender)
         """
+        self_wxid = wcf.get_self_wxid()
         content = msg.content if msg.type == 1 else ''
         print(f'id: {msg.id}, sender: {msg.sender}, type: {msg.type}, content: {content}')
-        if msg.type == 1 and wcf.get_self_wxid() == msg.sender:
-            parse_msg_self(msg.content, wcf)
+        if msg.type == 1 and self_wxid == msg.sender:
+            parse_msg_self(msg.content, self_wxid, wcf)
         if msg.type == 49:
             parse_msg_xml(msg.content)
 
