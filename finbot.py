@@ -40,13 +40,15 @@ class FinBot:
             parse_msg_xml(msg.content)
 
     def enableReceivingMsg(self) -> None:
+        print(f'wxid: {self.wxid}')
         def innerProcessMsg(wcf: Wcf):
             while wcf.is_receiving_msg():
                 try:
                     msg = wcf.get_msg()
-                    # self.LOG.info(msg)
+                    self.LOG.info(msg)
                     self.processMsg(msg)
                 except Empty:
+                    self.LOG.error('Empty msg')
                     continue  # Empty message
                 except Exception as e:
                     self.LOG.error(f"Receiving message error: {e}")
