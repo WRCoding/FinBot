@@ -38,12 +38,19 @@ def parse_msg_xml(content):
 
 def parse_msg_self(content, wcf: Wcf):
     service = TransactionService()
-    data = service.get_all_transactions()
     match content:
         case '#全部数据':
+            data = service.get_transactions_count_by_type()
             # 构建消息字符串
             msg = '\n'.join([
-                f"类型: {t.type}, 发布者: {t.publisher}, 金额: {t.amount}, 时间: {t.transaction_time}, 备注: {t.remark}"
+                f"类型: {t.type}, 金额: {t.amount}"
+                for t in data
+            ])
+            wcf.send_text(msg, wcf.get_self_wxid())
+        case '#昨日数据':
+            data = service.get_yesterday_transactions_by_type()
+            msg = '\n'.join([
+                f"类型: {t['type']}, 金额: {t['total_amount']}"
                 for t in data
             ])
             wcf.send_text(msg, wcf.get_self_wxid())
