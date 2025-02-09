@@ -36,21 +36,31 @@ def parse_msg_xml(content):
         print(f"Error with : {str(e)}")
     # 判断条件
 
+
 def parse_msg_self(content, wcf: Wcf):
     service = TransactionService()
     match content:
         case '#全部数据':
             data = service.get_transactions_count_by_type()
-            # 构建消息字符串
-            msg = '\n'.join([
-                f"类型: {t.type}, 金额: {t.amount}, 时间: {t.transaction_time}, 备注: {t.remark}"
-                for t in data
-            ])
-            content = f"""
-                            ----------------全部数据----------------
-                            {msg}
-                        """
-            wcf.send_text(content, wcf.get_self_wxid())
+            batch_size = 3  # 每批包含的交易数量
+            start_index = 0
+            while start_index < len(data):
+                # 获取当前批次的数据
+                current_batch = data[start_index:start_index + batch_size]
+                # 格式化当前批次的数据
+                msg = '\n'.join([
+                    f"""类型: {transaction.type} 
+                        金额: {transaction.amount} 
+                        时间: {transaction.transaction_time} 
+                        备注: {transaction.remark} 
+                        ----------------------------------------------"""
+                    for transaction in current_batch
+                ])
+                wcf.send_text(msg, wcf.get_self_wxid())
+                # 更新start_index以指向下一个批次的起始位置
+                start_index += batch_size
+
+
         case '#昨日数据':
             data = service.get_yesterday_transactions_by_type()
             msg = '\n'.join([
