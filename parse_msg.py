@@ -50,10 +50,10 @@ def parse_msg_self(content, wcf: Wcf):
                 # 格式化当前批次的数据
                 msg = '\n'.join([
                     f"""类型: {transaction.type} 
-                        金额: {transaction.amount} 
-                        时间: {transaction.transaction_time} 
-                        备注: {transaction.remark} 
-                        ----------------------------------------------"""
+金额: {transaction.amount} 
+时间: {transaction.transaction_time} 
+备注: {transaction.remark} 
+-----------------------------------"""
                     for transaction in current_batch
                 ])
                 wcf.send_text(msg, wcf.get_self_wxid())
