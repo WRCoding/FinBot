@@ -108,7 +108,7 @@ class TransactionService(BaseDBService[Transaction]):
     def get_transactions_count_by_type(self):
         """按类型统计交易记录数量"""
         with get_db() as db:
-            result = db.query(Transaction.type, func.sum(Transaction.amount).label("amount")).group_by(
+            result = db.query(Transaction.type, func.sum(Transaction.amount).label("amount"), Transaction.transaction_time, Transaction.remark).group_by(
                 Transaction.type).all()
             return result
 

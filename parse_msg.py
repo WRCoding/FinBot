@@ -43,10 +43,14 @@ def parse_msg_self(content, wcf: Wcf):
             data = service.get_transactions_count_by_type()
             # 构建消息字符串
             msg = '\n'.join([
-                f"类型: {t.type}, 金额: {t.amount}"
+                f"类型: {t.type}, 金额: {t.amount}, 时间: {t.transaction_time}, 备注: {t.remark}"
                 for t in data
             ])
-            wcf.send_text(msg, wcf.get_self_wxid())
+            content = f"""
+                            ----------------全部数据----------------
+                            {msg}
+                        """
+            wcf.send_text(content, wcf.get_self_wxid())
         case '#昨日数据':
             data = service.get_yesterday_transactions_by_type()
             msg = '\n'.join([
