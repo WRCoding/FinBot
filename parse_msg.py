@@ -54,6 +54,10 @@ def parse_msg_self(content, wcf: Wcf):
                 for t in data
             ])
             wcf.send_text(msg, wcf.get_self_wxid())
+        case '#测试':
+            with open('msg.xml', 'r') as f:
+                content = f.read()
+            wcf.send_xml(wcf.get_self_wxid(), content, 5)
 
 #
 # if __name__ == '__main__':
