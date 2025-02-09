@@ -70,7 +70,7 @@ def parse_msg_self(content, wcf: Wcf):
                 transaction_lines.append(f"备注: {transaction.remark}")
 
             # 添加分隔线
-            transaction_lines.append("-----------------------------------")
+            transaction_lines.append("---------------------------------")
 
             batch_messages.append("\n".join(transaction_lines))
         msg = "\n".join(batch_messages)
