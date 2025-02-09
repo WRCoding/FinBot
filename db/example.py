@@ -19,7 +19,7 @@ data = service.get_transactions_count_by_type()
 
 a_data = service.get_yesterday_transactions_by_type()
 msg = '\n'.join([
-                f"类型: {t['type']}, 金额: {t['total_amount']}"
+                f"类型: {t.type}, 金额: {t.amount}"
                 for t in a_data
             ])
 print(msg)

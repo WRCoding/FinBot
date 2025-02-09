@@ -31,10 +31,7 @@ class TransactionService(BaseDBService[Transaction]):
         """获取全部的交易记录"""
         with get_db() as db:
             stmt = (
-                select(self.model.type,
-                       self.model.transaction_time,
-                       self.model.remark,
-                       self.model.amount)
+                select(self.model)
                 .order_by(self.model.transaction_time.desc())
             )
             result = list(db.scalars(stmt))
