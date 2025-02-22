@@ -10,7 +10,7 @@ from ai.core.provider import AIProvider
 from ai.services.manager import AIManager
 from db.services import TransactionService
 from feishu.config import APP_ID, APP_SECRET
-from feishu.table import insert_data, FeishuTableSender
+from feishu.table import FeishuTableSender
 
 
 def clean_text(text):
