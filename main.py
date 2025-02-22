@@ -5,9 +5,10 @@ from wcferry import Wcf
 
 from db import init_db
 from finbot import FinBot
-
+from feishu import start
 app = FastAPI()
 init_db()
+start()
 def start_fin_bot():
     wcf = Wcf(debug=True)
 

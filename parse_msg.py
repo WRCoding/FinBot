@@ -35,7 +35,7 @@ def parse_msg_xml(content):
             data.pop('标题')
             service = TransactionService()
             service.create(data)
-            values = [[data['transaction_time'], data['type'], data['金额'], data['remark']]]
+            values = [[data['transaction_time'], data['type'], data['amount'], data['remark']]]
             insert_feishu(values)
             return data
         print("不符合条件，跳过解析。")
