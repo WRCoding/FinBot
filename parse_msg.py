@@ -9,13 +9,19 @@ from wcferry import Wcf
 from ai.core.provider import AIProvider
 from ai.services.manager import AIManager
 from db.services import TransactionService
-from feishu.table import insert_data
+from feishu.config import APP_ID, APP_SECRET
+from feishu.table import insert_data, FeishuTableSender
 
 
 def clean_text(text):
     if text is None:
         return ""
     return text.strip()
+
+
+def insert_feishu(values):
+    table_sender = FeishuTableSender(APP_ID, APP_SECRET)
+    table_sender.insert_data(values)
 
 
 def parse_msg_xml(content):
@@ -30,7 +36,7 @@ def parse_msg_xml(content):
             service = TransactionService()
             service.create(data)
             values = [[data['transaction_time'], data['type'], data['金额'], data['remark']]]
-            insert_data(values)
+            insert_feishu(values)
             return data
         print("不符合条件，跳过解析。")
         return None
