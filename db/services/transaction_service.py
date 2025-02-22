@@ -6,6 +6,9 @@ from db.service import BaseDBService
 from db.session import get_db
 from sqlalchemy import func
 
+from feishu.config import TEMPLATE_ID
+from feishu.message_template import TemplateVariable, Template, TemplateData
+
 
 class TransactionService(BaseDBService[Transaction]):
     def __init__(self):
@@ -74,3 +77,36 @@ class TransactionService(BaseDBService[Transaction]):
             for obj in result:
                 db.refresh(obj)  # 刷新每个对象以加载所有属性
             return result
+
+    def get_transactions_for_template(self, template_id: str = TEMPLATE_ID, version: str = "1.0.3") -> Template:
+        """获取交易记录并转换为模板对象"""
+        with get_db() as db:
+            stmt = (
+                select(
+                    self.model.type,
+                    self.model.amount,
+                    self.model.transaction_time,
+                    self.model.remark
+                )
+                .order_by(self.model.transaction_time.desc())
+            )
+            rows = db.execute(stmt).all()
+            transaction_list = [
+                {
+                    "type": row[0],
+                    "amount": row[1],
+                    "transaction_time": row[2],
+                    "remark": row[3]
+                } for row in rows
+            ]
+            
+            return Template(
+                type="template",
+                data=TemplateData(
+                    template_id=template_id,
+                    template_version_name=version,
+                    template_variable=TemplateVariable(
+                        transactions=transaction_list
+                    )
+                )
+            )

@@ -1,8 +1,13 @@
+from db import init_db
 from db.services import TransactionService
-from db.base import init_db
-from datetime import datetime, timedelta
+from feishu.config import APP_ID, APP_SECRET
+from feishu.message import FeishuMessageSender
+from feishu.table import FeishuTableSender
 
-# 初始化数据库（创建表）
+sender = FeishuMessageSender(
+    app_id=APP_ID,
+    app_secret=APP_SECRET
+)
 init_db()
 
 # 创建服务实例
@@ -16,6 +21,3 @@ data = service.get_transactions_count_by_type()
 #                 for t in data
 #             ])
 # print(msg)
-
-temp = service.get_transactions_for_template()
-print(temp.to_escaped_json())

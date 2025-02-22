@@ -9,6 +9,7 @@ from wcferry import Wcf
 from ai.core.provider import AIProvider
 from ai.services.manager import AIManager
 from db.services import TransactionService
+from feishu.table import insert_data
 
 
 def clean_text(text):
@@ -28,6 +29,8 @@ def parse_msg_xml(content):
             data.pop('标题')
             service = TransactionService()
             service.create(data)
+            values = [[data['transaction_time'], data['type'], data['金额'], data['remark']]]
+            insert_data(values)
             return data
         print("不符合条件，跳过解析。")
         return None
