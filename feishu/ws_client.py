@@ -13,9 +13,9 @@ def do_p2_im_message_receive_v1(data: lark.im.v1.P2ImMessageReceiveV1) -> None:
     print(
         f'[ do_p2_im_message_receive_v1 access ], data: {lark.JSON.marshal(data.event.sender.sender_id.open_id, indent=4)}')
 
-
+#
 def do_message_event(data: P2ApplicationBotMenuV6) -> None:
-    print(f'[ do_customized_event access ], type: message, data: {lark.JSON.marshal(data.event, indent=4)}')
+    # print(f'[ do_customized_event access ], type: message, data: {lark.JSON.marshal(data.event, indent=4)}')
     from db.services import TransactionService
     from feishu.message import FeishuMessageSender
     service = TransactionService()
@@ -34,7 +34,7 @@ event_handler = lark.EventDispatcherHandler.builder("", "") \
 def _ws_client_thread():
     cli = lark.ws.Client(APP_ID, APP_SECRET,
                          event_handler=event_handler,
-                         log_level=lark.LogLevel.DEBUG)
+                         log_level=lark.LogLevel.INFO)
     cli.start()
 
 
