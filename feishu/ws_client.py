@@ -19,7 +19,7 @@ def do_message_event(data: P2ApplicationBotMenuV6) -> None:
     from db.services import TransactionService
     from feishu.message import FeishuMessageSender
     service = TransactionService()
-    template =service.get_transactions_for_template('1.0.3')
+    template =service.get_transactions_for_template()
     msg_sender = FeishuMessageSender(APP_ID, APP_SECRET)
     resp = msg_sender.send_message(data.event.operator.operator_id.open_id, 'interactive', template.to_json())
     print(resp)
