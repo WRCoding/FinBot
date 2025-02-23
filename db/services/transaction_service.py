@@ -78,7 +78,7 @@ class TransactionService(BaseDBService[Transaction]):
                 db.refresh(obj)  # 刷新每个对象以加载所有属性
             return result
 
-    def get_transactions_for_template(self, template_id: str = TEMPLATE_ID, version: str = "1.0.3") -> Template:
+    def get_transactions_for_template(self, template_id: str = TEMPLATE_ID, version: str = "1.0.4") -> Template:
         """获取交易记录并转换为模板对象"""
         with get_db() as db:
             stmt = (
