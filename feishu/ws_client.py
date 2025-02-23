@@ -1,4 +1,5 @@
 import lark_oapi as lark
+import threading
 from lark_oapi.api.application.v6 import P2ApplicationBotMenuV6
 
 
@@ -25,8 +26,15 @@ event_handler = lark.EventDispatcherHandler.builder("", "") \
     .build()
 
 
-def start():
+def _ws_client_thread():
     cli = lark.ws.Client(APP_ID, APP_SECRET,
                          event_handler=event_handler,
                          log_level=lark.LogLevel.DEBUG)
     cli.start()
+
+
+def start():
+    ws_thread = threading.Thread(target=_ws_client_thread, name="feishu_ws_client")
+    ws_thread.daemon = True  # 设置为守护线程，这样主程序退出时，WebSocket 客户端也会退出
+    ws_thread.start()
+    return ws_thread  # 返回线程对象，方便调用方管理线程
