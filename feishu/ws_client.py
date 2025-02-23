@@ -29,7 +29,7 @@ event_handler = lark.EventDispatcherHandler.builder("", "") \
 def _ws_client_thread():
     cli = lark.ws.Client(APP_ID, APP_SECRET,
                          event_handler=event_handler,
-                         log_level=lark.LogLevel.DEBUG)
+                         log_level=lark.LogLevel.INFO)
     cli.start()
 
 
