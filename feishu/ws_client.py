@@ -6,6 +6,7 @@ from lark_oapi.api.application.v6 import P2ApplicationBotMenuV6
 from feishu.config import APP_ID, APP_SECRET
 
 
+
 ## P2ImMessageReceiveV1 为接收消息 v2.0；CustomizedEvent 内的 message 为接收消息 v1.0。
 def do_p2_im_message_receive_v1(data: lark.im.v1.P2ImMessageReceiveV1) -> None:
     open_id = data.event.sender.sender_id.open_id
@@ -16,8 +17,11 @@ def do_p2_im_message_receive_v1(data: lark.im.v1.P2ImMessageReceiveV1) -> None:
 def do_message_event(data: P2ApplicationBotMenuV6) -> None:
     print(f'[ do_customized_event access ], type: message, data: {lark.JSON.marshal(data.event, indent=4)}')
     from db.services import TransactionService
+    from feishu.message import FeishuMessageSender
     service = TransactionService()
-    service.get_transactions_for_template('1.0.3')
+    template =service.get_transactions_for_template('1.0.3')
+    msg_sender = FeishuMessageSender(APP_ID, APP_SECRET)
+    msg_sender.send_message(data.event.operator.operator_id.open_id, 'interactive', template.to_json())
 
 
 event_handler = lark.EventDispatcherHandler.builder("", "") \
