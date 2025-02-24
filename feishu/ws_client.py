@@ -15,14 +15,25 @@ def do_p2_im_message_receive_v1(data: lark.im.v1.P2ImMessageReceiveV1) -> None:
 
 #
 def do_message_event(data: P2ApplicationBotMenuV6) -> None:
-    # print(f'[ do_customized_event access ], type: message, data: {lark.JSON.marshal(data.event, indent=4)}')
     from db.services import TransactionService
     from feishu.message import FeishuMessageSender
+    from feishu.message_handlers import MessageHandlerFactory
     service = TransactionService()
-    template =service.get_transactions_for_template()
     msg_sender = FeishuMessageSender(APP_ID, APP_SECRET)
-    resp = msg_sender.send_message(data.event.operator.operator_id.open_id, 'interactive', template.to_json())
-    print(resp)
+    print(f'[do_message_event access] key: {data.event.event_key}')
+    try:
+        handler = MessageHandlerFactory.get_handler(
+            data.event.event_key,
+            service,
+            msg_sender
+        )
+        handler.handle(data.event.operator.operator_id.open_id)
+    except ValueError as e:
+        print(f"错误: {str(e)}")
+        # 可以在这里处理未知key的情况，比如发送错误提示消息
+    except Exception as e:
+        print(f"处理消息时发生错误: {str(e)}")
+        # 可以在这里处理其他异常情况
 
 
 event_handler = lark.EventDispatcherHandler.builder("", "") \

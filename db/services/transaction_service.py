@@ -7,7 +7,7 @@ from db.session import get_db
 from sqlalchemy import func
 
 from feishu.config import TEMPLATE_ID
-from feishu.message_template import TemplateVariable, Template, TemplateData
+from feishu.template import TemplateVariable, Template, TemplateData
 
 
 class TransactionService(BaseDBService[Transaction]):
@@ -78,35 +78,69 @@ class TransactionService(BaseDBService[Transaction]):
                 db.refresh(obj)  # 刷新每个对象以加载所有属性
             return result
 
-    def get_transactions_for_template(self, template_id: str = TEMPLATE_ID, version: str = "1.0.4") -> Template:
-        """获取交易记录并转换为模板对象"""
-        with get_db() as db:
-            stmt = (
-                select(
-                    self.model.type,
-                    self.model.amount,
-                    self.model.transaction_time,
-                    self.model.remark
+    def transfer_template(self, transactions: List[Transaction], template_id: str = TEMPLATE_ID, version: str = "1.0.4") -> Template:
+        """将交易记录转换为模板对象
+
+        Args:
+            transactions: 交易记录列表
+            template_id: 模板ID
+            version: 模板版本
+
+        Returns:
+            Template: 转换后的模板对象
+        """
+        transaction_list = [
+            {
+                "type": transaction.type,
+                "amount": transaction.amount,
+                "transaction_time": transaction.transaction_time,
+                "remark": transaction.remark
+            } for transaction in transactions
+        ]
+
+        return Template(
+            type="template",
+            data=TemplateData(
+                template_id=template_id,
+                template_version_name=version,
+                template_variable=TemplateVariable(
+                    transactions=transaction_list
                 )
-                .order_by(self.model.transaction_time.desc())
             )
-            rows = db.execute(stmt).all()
-            transaction_list = [
-                {
-                    "type": row[0],
-                    "amount": row[1],
-                    "transaction_time": row[2],
-                    "remark": row[3]
-                } for row in rows
-            ]
+        )
+
+    def get_transactions_by_date(self, start_date: str, end_date: str = None) -> List[Transaction]:
+        """获取指定日期范围的交易记录
+        
+        Args:
+            start_date: 开始日期，格式为'YYYY年MM月DD日'
+            end_date: 结束日期，格式为'YYYY年MM月DD日'，如果不传则只查询start_date当天的数据
             
-            return Template(
-                type="template",
-                data=TemplateData(
-                    template_id=template_id,
-                    template_version_name=version,
-                    template_variable=TemplateVariable(
-                        transactions=transaction_list
-                    )
+        Returns:
+            List[Transaction]: 交易记录列表
+        """
+        with get_db() as db:
+            if end_date is None:
+                # 如果没有传入end_date，则查询start_date当天的数据
+                stmt = (
+                    select(self.model)
+                    .where(self.model.transaction_time.like(f"{start_date}%"))
+                    .order_by(self.model.transaction_time.desc())
                 )
-            )
+            else:
+                # 查询日期范围内的数据
+                stmt = (
+                    select(self.model)
+                    .where(
+                        and_(
+                            self.model.transaction_time > start_date,
+                            self.model.transaction_time < end_date
+                        )
+                    )
+                    .order_by(self.model.transaction_time.desc())
+                )
+            
+            result = list(db.scalars(stmt))
+            for obj in result:
+                db.refresh(obj)
+            return result

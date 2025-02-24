@@ -14,4 +14,4 @@ class Transaction(Base):
     type = Column(String(10), nullable=True, index=True, comment="类型")
 
     def __repr__(self):
-        return f"<Transaction(id={self.id if '_sa_instance_state' in self.__dict__ else None})>" 
+        return f"<Transaction(id={self.id}, amount={self.amount}, time={self.transaction_time}, publisher={self.publisher})>" 
