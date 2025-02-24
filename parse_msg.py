@@ -11,6 +11,7 @@ from ai.services.manager import AIManager
 from db.services import TransactionService
 from feishu.config import APP_ID, APP_SECRET
 from feishu.table import FeishuTableSender
+from util.date_util import get_date
 
 
 def clean_text(text):
@@ -53,7 +54,9 @@ def parse_msg_self(content, wcf: Wcf):
         case '#全部数据':
             data = service.get_all_transactions()
         case '#昨日数据':
-            data = service.get_yesterday_transactions_by_type()
+            data = service.get_transactions_by_date(get_date(-1))
+        case '#今日数据':
+            data = service.get_transactions_by_date(get_date())
 
     if not data:
         wcf.send_text('没有数据', wcf.get_self_wxid())
