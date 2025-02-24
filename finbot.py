@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import re
 import time
-import xml.etree.ElementTree as ET
 from queue import Empty
 from threading import Thread
 
@@ -14,7 +12,6 @@ import schedule
 
 from config import WX_ID
 from parse_msg import parse_msg_xml, parse_msg_self
-from scheduler.daily_tasks import init_scheduler
 from util.date_util import get_date
 
 
