@@ -13,7 +13,6 @@ init_db()
 service = TransactionService()
 
 
-data = service.get_transactions_count_by_type()
 # print(data)
 # msg = '\n'.join([
 #                 f"类型: {t.type}, 金额: {t.amount}"

@@ -7,7 +7,7 @@ from ai.services.manager import AIManager
 from db.services import TransactionService
 from config import APP_ID, APP_SECRET, WX_ID
 from feishu.table import FeishuTableSender
-from util.date_util import get_date
+from util.date_util import get_date, convert_date_format
 
 
 def clean_text(text):
@@ -43,9 +43,10 @@ def parse_msg_xml(content):
     # 判断条件
 
 
-def parse_msg_self(content, wcf: Wcf):
+def parse_msg_self(content: str, wcf: Wcf):
     service = TransactionService()
     data = []
+    summary_date = ''
     match content:
         case '#全部数据':
             data = service.get_all_transactions()
@@ -53,6 +54,11 @@ def parse_msg_self(content, wcf: Wcf):
             data = service.get_transactions_by_date(get_date(-1))
         case '#今日数据':
             data = service.get_transactions_by_date(get_date())
+
+    if content.startswith('#汇总@'):
+        params = content.split('@')
+        summary_date = convert_date_format(params[1])
+        data = service.get_transactions_summary_by_date(summary_date)
 
     if not data:
         wcf.send_text('没有数据', WX_ID)
@@ -67,15 +73,20 @@ def parse_msg_self(content, wcf: Wcf):
         for transaction in current_batch:
             transaction_lines = []
 
-            # 动态添加各字段信息
-            if hasattr(transaction, 'type') and transaction.type:
-                transaction_lines.append(f"类型: {transaction.type}")
-            if hasattr(transaction, 'amount') and transaction.amount:
-                transaction_lines.append(f"金额: {transaction.amount}")
-            if hasattr(transaction, 'transaction_time') and transaction.transaction_time:
-                transaction_lines.append(f"时间: {transaction.transaction_time}")
-            if hasattr(transaction, 'remark') and transaction.remark:
-                transaction_lines.append(f"备注: {transaction.remark}")
+            if type(transaction) is dict:
+                transaction_lines.append(f"时间: {summary_date}")
+                transaction_lines.append(f"类型: {transaction['type']}")
+                transaction_lines.append(f"金额: {transaction['amount']}")
+            else:
+                # 动态添加各字段信息
+                if hasattr(transaction, 'type') and transaction.type:
+                    transaction_lines.append(f"类型: {transaction.type}")
+                if hasattr(transaction, 'amount') and transaction.amount:
+                    transaction_lines.append(f"金额: {transaction.amount}")
+                if hasattr(transaction, 'transaction_time') and transaction.transaction_time:
+                    transaction_lines.append(f"时间: {transaction.transaction_time}")
+                if hasattr(transaction, 'remark') and transaction.remark:
+                    transaction_lines.append(f"备注: {transaction.remark}")
 
             # 添加分隔线
             transaction_lines.append("---------------------------------")
