@@ -1,8 +1,7 @@
 from db import init_db
 from db.services import TransactionService
-from feishu.config import APP_ID, APP_SECRET
+from config import APP_ID, APP_SECRET
 from feishu.message import FeishuMessageSender
-from feishu.table import FeishuTableSender
 
 sender = FeishuMessageSender(
     app_id=APP_ID,

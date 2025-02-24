@@ -3,7 +3,7 @@ import json
 import lark_oapi as lark
 from lark_oapi.api.auth.v3 import *
 
-from feishu.config import APP_ID, APP_SECRET
+from config import APP_ID, APP_SECRET
 from http_client import client
 
 def get_token():

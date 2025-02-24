@@ -3,7 +3,7 @@ import threading
 from lark_oapi.api.application.v6 import P2ApplicationBotMenuV6
 
 
-from feishu.config import APP_ID, APP_SECRET
+from config import APP_ID, APP_SECRET
 
 
 

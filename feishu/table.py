@@ -1,12 +1,7 @@
-import json
-
 import requests
+from typing import Dict
 
-import requests
-import json
-from typing import Dict, Optional, Union
-
-from feishu.config import SHEET_TOKEN, WORK_TABLE
+from config import SHEET_TOKEN, WORK_TABLE
 
 
 class FeishuTableSender:

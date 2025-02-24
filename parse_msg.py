@@ -1,15 +1,11 @@
 from datetime import datetime
 import json
-import xml.etree.ElementTree as ET
-import os
 
-from dateutil import parser
 from wcferry import Wcf
 
-from ai.core.provider import AIProvider
 from ai.services.manager import AIManager
 from db.services import TransactionService
-from feishu.config import APP_ID, APP_SECRET
+from config import APP_ID, APP_SECRET, WX_ID
 from feishu.table import FeishuTableSender
 from util.date_util import get_date
 
@@ -59,7 +55,7 @@ def parse_msg_self(content, wcf: Wcf):
             data = service.get_transactions_by_date(get_date())
 
     if not data:
-        wcf.send_text('没有数据', wcf.get_self_wxid())
+        wcf.send_text('没有数据', WX_ID)
         return
 
     batch_size = 3  # 每批包含的交易数量
@@ -86,7 +82,7 @@ def parse_msg_self(content, wcf: Wcf):
 
             batch_messages.append("\n".join(transaction_lines))
         msg = "\n".join(batch_messages)
-        wcf.send_text(msg, wcf.get_self_wxid())
+        wcf.send_text(msg, WX_ID)
         # 更新start_index以指向下一个批次的起始位置
         start_index += batch_size
 #

@@ -11,6 +11,7 @@ from wcferry import Wcf, WxMsg
 
 import schedule
 
+from config import WX_ID
 from parse_msg import parse_msg_xml, parse_msg_self
 
 
@@ -33,7 +34,7 @@ class FinBot:
         """
         content = msg.content if msg.type == 1 else ''
         print(f'id: {msg.id}, sender: {msg.sender}, type: {msg.type}, content: {content}')
-        if msg.type == 1 and msg.sender == 'f846179345':
+        if msg.type == 1 and msg.sender == WX_ID:
             parse_msg_self(msg.content, self.wcf)
         if msg.type == 49:
             parse_msg_xml(msg.content)
