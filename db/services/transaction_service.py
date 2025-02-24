@@ -14,12 +14,12 @@ class TransactionService(BaseDBService[Transaction]):
     def __init__(self):
         super().__init__(Transaction)
 
-    def get_all_transactions(self) -> List[Transaction]:
+    def get_all_transactions(self, desc: bool=True) -> List[Transaction]:
         """获取全部的交易记录"""
         with get_db() as db:
             stmt = (
                 select(self.model)
-                .order_by(self.model.transaction_time.desc())
+                .order_by(self.model.transaction_time.desc() if desc else self.model.transaction_time.asc())
             )
             result = list(db.scalars(stmt))
             for obj in result:
@@ -59,13 +59,13 @@ class TransactionService(BaseDBService[Transaction]):
             )
         )
 
-    def get_transactions_by_date(self, start_date: str, end_date: str = None) -> List[Transaction]:
+    def get_transactions_by_date(self, start_date: str, end_date: str = None, desc: bool=True) -> List[Transaction]:
         """获取指定日期范围的交易记录
         
         Args:
             start_date: 开始日期，格式为'YYYY年MM月DD日'
             end_date: 结束日期，格式为'YYYY年MM月DD日'，如果不传则只查询start_date当天的数据
-            
+            desc: 是否倒序输出
         Returns:
             List[Transaction]: 交易记录列表
         """
@@ -75,7 +75,7 @@ class TransactionService(BaseDBService[Transaction]):
                 stmt = (
                     select(self.model)
                     .where(self.model.transaction_time.like(f"{start_date}%"))
-                    .order_by(self.model.transaction_time.desc())
+                    .order_by(self.model.transaction_time.desc() if desc else self.model.transaction_time.asc())
                 )
             else:
                 # 查询日期范围内的数据

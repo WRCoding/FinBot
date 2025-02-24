@@ -1,4 +1,4 @@
-from .ws_client import start
+from .ws_client import start_feishu_bot
 __all__ = [
-    'start',
+    'start_feishu_bot',
 ]

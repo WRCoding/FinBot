@@ -5,10 +5,10 @@ from wcferry import Wcf
 
 from db import init_db
 from finbot import FinBot
-from feishu import start
-app = FastAPI()
+from feishu import start_feishu_bot
+
 init_db()
-start()
+start_feishu_bot()
 def start_fin_bot():
     wcf = Wcf(debug=True)
 
@@ -21,17 +21,10 @@ def start_fin_bot():
     robot = FinBot(wcf)
     robot.LOG.info(f"FinBot成功启动···")
 
+    robot.start_scheduler()
     robot.enableReceivingMsg()  # 加队列
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()
 
 start_fin_bot()
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
 

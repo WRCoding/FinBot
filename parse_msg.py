@@ -49,11 +49,11 @@ def parse_msg_self(content: str, wcf: Wcf):
     summary_date = ''
     match content:
         case '#全部数据':
-            data = service.get_all_transactions()
+            data = service.get_all_transactions(desc=False)
         case '#昨日数据':
-            data = service.get_transactions_by_date(get_date(-1))
+            data = service.get_transactions_by_date(get_date(-1), desc=False)
         case '#今日数据':
-            data = service.get_transactions_by_date(get_date())
+            data = service.get_transactions_by_date(get_date(), desc=False)
 
     if content.startswith('#汇总@'):
         params = content.split('@')

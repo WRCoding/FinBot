@@ -1,3 +1,4 @@
 from parse_msg import parse_msg_self
+from util.date_util import get_date
 
-parse_msg_self('#汇总@20250201', None)
+print(get_date(count=-1, format='%Y%m%d'))

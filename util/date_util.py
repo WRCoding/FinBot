@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta
 
-def get_date(count: int=0):
+def get_date(count: int=0, format: str='%Y年%m月%d日') -> str:
     # 获取今天的日期
     today = datetime.now()
     # 计算昨天的日期
     cal_date = today + timedelta(days=count)
     # 格式化输出
-    formatted_date = cal_date.strftime('%Y年%m月%d日')
+    formatted_date = cal_date.strftime(format)
     return formatted_date
 
 def convert_date_format(date_str):

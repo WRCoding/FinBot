@@ -49,7 +49,7 @@ def _ws_client_thread():
     cli.start()
 
 
-def start():
+def start_feishu_bot():
     ws_thread = threading.Thread(target=_ws_client_thread, name="feishu_ws_client")
     ws_thread.daemon = True  # 设置为守护线程，这样主程序退出时，WebSocket 客户端也会退出
     ws_thread.start()
