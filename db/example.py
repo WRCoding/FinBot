@@ -1,4 +1,4 @@
-import util.date_util
+from util.date_util import get_date
 from db.services import TransactionService
 from db.base import init_db
 from datetime import datetime, timedelta
@@ -20,4 +20,4 @@ service = TransactionService()
 # print(data)
 # temp = service.transfer_template(service.get_all_transactions())
 # print(temp)
-print(util.date_util.get_yesterday_date())
+print(get_date(-1))
