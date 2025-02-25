@@ -83,7 +83,8 @@ class FinBot:
             self.send_daily_summary,
             trigger='cron',
             hour=8,
-            minute=0
+            minute=0,
+            misfire_grace_time=None
         )
 
         # 启动调度器

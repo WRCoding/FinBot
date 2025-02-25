@@ -1,3 +1,4 @@
+from config import DEEP_SEEK
 from ..core.base import AIService, AIResponse
 from ..core.config import AIConfig
 from openai import OpenAI
@@ -7,8 +8,7 @@ class DeepseekService(AIService):
     """Deepseek服务实现"""
 
     def __init__(self):
-        # self.api_key = AIConfig.get_deepseek_api_key()
-        self.api_key = ''
+        self.api_key = DEEP_SEEK
         self.client = OpenAI(api_key=self.api_key, base_url="https://api.deepseek.com")
 
     def generate(self, prompt: str, **kwargs) -> AIResponse:

@@ -1,4 +1,6 @@
 from openai import OpenAI
+
+from config import OPEN_AI
 from ..core.base import AIService, AIResponse
 from ..core.config import AIConfig
 
@@ -7,7 +9,7 @@ class OpenAIService(AIService):
     """OpenAI服务实现"""
 
     def __init__(self):
-        self.api_key = ''
+        self.api_key = OPEN_AI
         if self.is_available():
             self.client = OpenAI(api_key=self.api_key, base_url='https://openai.api2d.net/v1')
 
