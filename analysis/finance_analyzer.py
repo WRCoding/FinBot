@@ -103,19 +103,19 @@ class FinanceAnalyzer:
         
         # 获取目标日期的数据
         target_data = self.df[self.df['日期'] == target_date]
-        target_income = target_data[target_data['类型'] == '收入']['金额'].sum()
-        target_expense = target_data[target_data['类型'] == '支出']['金额'].sum()
+        target_income = round(target_data[target_data['类型'] == '收入']['金额'].sum(), 2)
+        target_expense = round(target_data[target_data['类型'] == '支出']['金额'].sum(), 2)
         
         # 获取前一天的数据
         previous_data = self.df[self.df['日期'] == previous_date]
-        previous_expense = previous_data[previous_data['类型'] == '支出']['金额'].sum()
+        previous_expense = round(previous_data[previous_data['类型'] == '支出']['金额'].sum(), 2)
         
         # 计算支出差值
-        expense_diff = target_expense - previous_expense
+        expense_diff = round(target_expense - previous_expense, 2)
         
         return [{
-            "income": target_income,
-            "expenses": target_expense,
+            "income": f"{target_income:.2f}",
+            "expenses": f"{target_expense:.2f}",
             "diff": f'多支出{expense_diff:.2f}' if expense_diff > 0 else f'少支出{abs(expense_diff):.2f}',
             "date": target_date.strftime('%Y-%m-%d')
         }]
