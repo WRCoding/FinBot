@@ -4,9 +4,10 @@ import json
 from wcferry import Wcf
 
 from ai.services.manager import AIManager
+from analysis import FinanceAnalyzer
 from db.services import TransactionService
 from config import APP_ID, APP_SECRET, WX_ID
-from feishu.table import FeishuTableSender
+from feishu.table import FeishuTable
 from util.date_util import get_date, convert_date_format
 
 
@@ -17,14 +18,14 @@ def clean_text(text):
 
 
 def insert_feishu(values):
-    table_sender = FeishuTableSender(APP_ID, APP_SECRET)
+    table_sender = FeishuTable(APP_ID, APP_SECRET)
     table_sender.insert_data(values)
 
 
 def parse_msg_xml(content):
     ai_manager = AIManager()
     try:
-        response = ai_manager.generate(content)
+        response = ai_manager.simple_chat(content)
         data = json.loads(response.content)
         print("response:", response.content)
         if data['publisher'] and data['publisher'].endswith('银行') and data['标题'] == '交易提醒':
@@ -45,8 +46,8 @@ def parse_msg_xml(content):
 
 def parse_msg_self(content: str, wcf: Wcf):
     service = TransactionService()
+    analyzer = FinanceAnalyzer()
     data = []
-    summary_date = ''
     match content:
         case '#全部数据':
             data = service.get_all_transactions(desc=False)
@@ -58,8 +59,7 @@ def parse_msg_self(content: str, wcf: Wcf):
     if content.startswith('#汇总@'):
         params = content.split('@')
         summary_date = convert_date_format(params[1])
-        data = service.get_transactions_summary_by_date(start_date=summary_date)
-
+        data = analyzer.get_today_summary(date_str=params[1])
     if not data:
         wcf.send_text('没有数据', WX_ID)
         return
@@ -74,9 +74,10 @@ def parse_msg_self(content: str, wcf: Wcf):
             transaction_lines = []
 
             if type(transaction) is dict:
-                transaction_lines.append(f"时间: {summary_date}")
-                transaction_lines.append(f"类型: {transaction['type']}")
-                transaction_lines.append(f"金额: {transaction['amount']}")
+                transaction_lines.append(f"时间: {transaction['date']}")
+                transaction_lines.append(f"收入: {transaction['income']}")
+                transaction_lines.append(f"支出: {transaction['expenses']}")
+                transaction_lines.append(f"与前一日对比: {transaction['diff']}")
             else:
                 # 动态添加各字段信息
                 if hasattr(transaction, 'type') and transaction.type:

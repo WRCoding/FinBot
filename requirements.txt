@@ -16,7 +16,9 @@ httpx==0.28.1
 idna==3.10
 jiter==0.8.2
 lark-oapi==1.4.10
+numpy==1.26.4
 openai==1.60.2
+pandas==2.2.2
 protobuf==5.29.3
 pycparser==2.22
 pycryptodome==3.21.0
