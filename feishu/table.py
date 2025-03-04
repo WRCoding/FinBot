@@ -1,6 +1,7 @@
 import json
 import threading
 import time
+from pathlib import Path
 
 import requests
 from typing import Dict
@@ -184,9 +185,10 @@ class FeishuTable:
             lark.logger.error(
                 f"client.drive.v1.export_task.download failed, code: {response.code}, msg: {response.msg}, log_id: {response.get_log_id()}, resp: \n{json.dumps(json.loads(response.raw.content), indent=4, ensure_ascii=False)}")
             return
-
+        file_path = f'{find_project_root()}/{response.file_name}'
+        Path(file_path).unlink(missing_ok=True)
         # 处理业务结果
-        f = open(f"{find_project_root()}/{response.file_name}", "wb")
+        f = open(f"{file_path}", "wb")
         f.write(response.file.read())
         f.close()
         pass

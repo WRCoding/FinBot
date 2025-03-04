@@ -13,9 +13,9 @@ def main():
     #     print(f"Error with default provider: {str(e)}")
     with open('msg.xml', mode='r', encoding='utf-8') as f:
         file_content = f.read()    # 指定特定提供商
-    ai_manager = AIManager(preferred_provider=AIProvider.OPENAI)
+    ai_manager = AIManager(preferred_provider=AIProvider.DEEPSEEK)
     try:
-        response = ai_manager.generate(file_content)
+        response = ai_manager.simple_chat(file_content)
         print("OpenAI response:", response.content)
     except Exception as e:
         print(f"Error with OpenAI: {str(e)}")

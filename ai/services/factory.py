@@ -1,13 +1,11 @@
 from typing import Dict, Optional, Type
 from ..core.base import AIService
 from ..core.provider import AIProvider
-from ..providers.openai_service import OpenAIService
 from ..providers.deepseek_service import DeepseekService
 
 class AIServiceFactory:
     """AI服务工厂类"""
     _services: Dict[AIProvider, Type[AIService]] = {
-        AIProvider.OPENAI: OpenAIService,
         AIProvider.DEEPSEEK: DeepseekService,
     }
     

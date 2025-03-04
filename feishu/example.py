@@ -23,7 +23,8 @@ table = FeishuTable(APP_ID, APP_SECRET)
 # project_root = common_util.find_project_root()
 # file_path = os.path.join(project_root, table_name + '.csv', )
 # print(file_path)
-print(table.get_file_path())
+# print(table.get_file_path())
+table.export_table()
 # print(data)
 # msg = '\n'.join([
 #                 f"类型: {t.type}, 金额: {t.amount}"
