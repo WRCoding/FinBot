@@ -5,14 +5,14 @@ import time
 from queue import Empty
 from threading import Thread
 
-from apscheduler.schedulers.background import BackgroundScheduler
-from wcferry import Wcf, WxMsg
-
 import schedule
+
+from wcferry import Wcf, WxMsg
 
 from config import WX_ID
 from parse_msg import parse_msg_xml, parse_msg_self
 from util.date_util import get_date
+from scheduler.task_manager import TaskManager
 
 
 class FinBot:
@@ -22,6 +22,7 @@ class FinBot:
         self.LOG = logging.getLogger("Robot")
         self.wxid = self.wcf.get_self_wxid()
         self.allContacts = self.getAllContacts()
+        self.task_manager = TaskManager()
 
     def processMsg(self, msg: WxMsg) -> None:
         """当接收到消息的时候，会调用本方法。如果不实现本方法，则打印原始消息。
@@ -69,23 +70,3 @@ class FinBot:
         while True:
             schedule.run_pending()
             time.sleep(1)
-
-    def send_daily_summary(self) -> None:
-        date = get_date(count=-1, format='%Y%m%d')
-        content = f'#汇总@{date}'
-        parse_msg_self(content, self.wcf)
-
-    def start_scheduler(self) -> None:
-        scheduler = BackgroundScheduler()
-
-        # 添加每天早上8点执行的任务
-        scheduler.add_job(
-            self.send_daily_summary,
-            trigger='cron',
-            hour=8,
-            minute=0,
-            misfire_grace_time=None
-        )
-
-        # 启动调度器
-        scheduler.start()
