@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-def get_date(count: int=0, format: str='%Y年%m月%d日') -> str:
+def get_date(count: int=0, format: str='%Y%m%d') -> str:
     # 获取今天的日期
     today = datetime.now()
     # 计算昨天的日期

@@ -72,8 +72,6 @@ class FinanceAnalyzer:
         
         # 提取备注中的商家信息
 
-        self.df.drop(columns=['备注'], inplace=True)
-
     def get_today_summary(self, date_str: str = None) -> List[dict]:
         """
         获取指定日期的收支情况和与前一天的支出差值
@@ -119,3 +117,51 @@ class FinanceAnalyzer:
             "diff": f'多支出{expense_diff:.2f}' if expense_diff > 0 else f'少支出{abs(expense_diff):.2f}',
             "date": target_date.strftime('%Y-%m-%d')
         }]
+    
+    def get_date_transactions(self, date_str: str = None) -> List[dict]:
+        """
+        获取指定日期的所有交易数据
+        
+        参数:
+            date_str (str, optional): 指定日期，格式为'YYYYMMDD'，例如'20250301'。如果不指定，则使用昨天的日期。
+        
+        返回:
+            List[dict]: 包含指定日期所有交易记录的字典列表
+        """
+        if self.df is None:
+            return []
+        
+        # 处理日期
+        if date_str:
+            try:
+                target_date = pd.to_datetime(date_str, format='%Y%m%d').date()
+            except ValueError:
+                return [{"error": "日期格式错误，请使用'YYYYMMDD'格式，例如'20250301'"}]
+        else:
+            target_date = pd.Timestamp.now().date()
+        
+        # 确保日期列存在
+        if '日期' not in self.df.columns:
+            self.df['日期'] = self.df['时间'].dt.date
+        
+        # 获取目标日期的数据
+        target_data = self.df[self.df['日期'] == target_date]
+        
+        # 如果没有数据，返回空列表
+        if target_data.empty:
+            return []
+        
+        # 按时间排序（从早到晚）
+        target_data = target_data.sort_values(by='时间')
+        
+        # 将数据转换为字典列表
+        transactions = []
+        for _, row in target_data.iterrows():
+            transactions.append({
+                "date": row['时间'].strftime('%H:%M:%S'),
+                "type": row['类型'],
+                "amount": f"{row['金额']:.2f}",
+                "remark": row['备注'] if '备注' in row else ""
+            })
+        
+        return transactions

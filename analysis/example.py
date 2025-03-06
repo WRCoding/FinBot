@@ -12,6 +12,7 @@ from ai.core.provider import AIProvider
 from ai.services.manager import AIManager
 from finance_analyzer import FinanceAnalyzer
 from util import date_util
+from util.date_util import get_date
 
 
 def main():
@@ -21,12 +22,13 @@ def main():
 
     # 创建分析器实例
     analyzer = FinanceAnalyzer()
-    user_content = f'''
-    以下为记账数据 \n
-    {analyzer.df}\n
-    问题: 昨天比前天花费的多还是少? 如果多是多花费了多少钱，少又是少了多少钱
-    '''
-    print(user_content)
+    print(analyzer.get_date_transactions(get_date(-1)))
+    # user_content = f'''
+    # 以下为记账数据 \n
+    # {analyzer.df}\n
+    # 问题: 昨天比前天花费的多还是少? 如果多是多花费了多少钱，少又是少了多少钱
+    # '''
+    # print(user_content)
     # sys_prompt = f'''
     # 你是一名智能数据分析助理,能够根据用户的记账数据内容来回答用户的问题。
     #                     1.今天的日期是: {date_util.get_date()}

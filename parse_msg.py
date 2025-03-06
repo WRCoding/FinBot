@@ -8,7 +8,7 @@ from analysis import FinanceAnalyzer
 from db.services import TransactionService
 from config import APP_ID, APP_SECRET, WX_ID
 from feishu.table import FeishuTable
-from util.date_util import get_date, convert_date_format
+from util.date_util import get_date
 
 
 def clean_text(text):
@@ -49,12 +49,12 @@ def parse_msg_self(content: str, wcf: Wcf):
     analyzer = FinanceAnalyzer()
     data = []
     match content:
-        case '#全部数据':
-            data = service.get_all_transactions(desc=False)
+        # case '#全部数据':
+        #     data = service.get_all_transactions(desc=False)
         case '#昨日数据':
-            data = service.get_transactions_by_date(get_date(-1), desc=False)
+            data = analyzer.get_date_transactions(date_str=get_date(-1))
         case '#今日数据':
-            data = service.get_transactions_by_date(get_date(), desc=False)
+            data = analyzer.get_date_transactions(date_str=get_date())
 
     if content.startswith('#汇总@'):
         params = content.split('@')
@@ -73,10 +73,20 @@ def parse_msg_self(content: str, wcf: Wcf):
             transaction_lines = []
 
             if type(transaction) is dict:
-                transaction_lines.append(f"时间: {transaction['date']}")
-                transaction_lines.append(f"收入: {transaction['income']}")
-                transaction_lines.append(f"支出: {transaction['expenses']}")
-                transaction_lines.append(f"与前一日对比: {transaction['diff']}")
+                if 'date' in transaction:
+                    transaction_lines.append(f"时间: {transaction['date']}")
+                if 'type' in transaction:
+                    transaction_lines.append(f"类型: {transaction['type']}")
+                if 'amount' in transaction:
+                    transaction_lines.append(f"金额：{transaction['amount']}")
+                if 'income' in transaction:
+                    transaction_lines.append(f"收入: {transaction['income']}")
+                if 'expenses' in transaction:
+                    transaction_lines.append(f"支出: {transaction['expenses']}")
+                if 'diff' in transaction:
+                    transaction_lines.append(f"与前一日对比: {transaction['diff']}")
+                if 'remark' in transaction:
+                    transaction_lines.append(f"备注: {transaction['remark']}")
             else:
                 # 动态添加各字段信息
                 if hasattr(transaction, 'type') and transaction.type:
