@@ -22,7 +22,6 @@ class FinBot:
         self.LOG = logging.getLogger("Robot")
         self.wxid = self.wcf.get_self_wxid()
         self.allContacts = self.getAllContacts()
-        self.task_manager = TaskManager()
 
     def processMsg(self, msg: WxMsg) -> None:
         """当接收到消息的时候，会调用本方法。如果不实现本方法，则打印原始消息。
@@ -33,7 +32,6 @@ class FinBot:
         self.sendTextMsg(content, receivers, msg.sender)
         """
         content = msg.content if msg.type == 1 else ''
-        print(f'id: {msg.id}, sender: {msg.sender}, type: {msg.type}, content: {content}')
         if msg.type == 1 and msg.sender == WX_ID:
             parse_msg_self(msg.content, self.wcf)
         if msg.type == 49:

@@ -58,7 +58,6 @@ def parse_msg_self(content: str, wcf: Wcf):
 
     if content.startswith('#汇总@'):
         params = content.split('@')
-        summary_date = convert_date_format(params[1])
         data = analyzer.get_today_summary(date_str=params[1])
     if not data:
         wcf.send_text('没有数据', WX_ID)

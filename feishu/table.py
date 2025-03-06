@@ -33,7 +33,7 @@ class FeishuTable:
         self.client = lark.Client.builder() \
             .app_id(app_id) \
             .app_secret(app_secret) \
-            .log_level(lark.LogLevel.DEBUG) \
+            .log_level(lark.LogLevel.INFO) \
             .build()
 
     def _get_tenant_access_token(self) -> str:

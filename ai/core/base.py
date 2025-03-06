@@ -15,7 +15,7 @@ class AIResponse:
 class AIService(ABC):
     """AI服务的抽象基类"""
     @abstractmethod
-    def simple_chat(self, prompt: str, sys_prompt: str = AIConfig.get_system_prompt(), json_format: bool = True, **kwargs) -> AIResponse:
+    def simple_chat(self, content: str, sys_prompt: str = AIConfig.get_system_prompt(), json_format: bool = True, **kwargs) -> AIResponse:
         pass
     
     @abstractmethod
