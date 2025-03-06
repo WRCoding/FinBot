@@ -6,6 +6,7 @@ import re
 
 from config import APP_SECRET, APP_ID
 from feishu.table import FeishuTable
+from util import date_util
 
 
 class FinanceAnalyzer:
@@ -158,10 +159,11 @@ class FinanceAnalyzer:
         transactions = []
         for _, row in target_data.iterrows():
             transactions.append({
-                "date": row['时间'].strftime('%H:%M:%S'),
+                "date": row['时间'],
                 "type": row['类型'],
                 "amount": f"{row['金额']:.2f}",
                 "remark": row['备注'] if '备注' in row else ""
             })
         
         return transactions
+
