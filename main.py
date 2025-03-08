@@ -23,7 +23,7 @@ def start_fin_bot():
     task_manager.register_task(DailySummaryTask(wcf=wcf))
     task_manager.register_task(UpdateCsvTask())
     signal.signal(signal.SIGINT, handler)
-
+    print(wcf.get_msg_types())
     robot = FinBot(wcf)
     robot.LOG.info(f"FinBot成功启动···")
 

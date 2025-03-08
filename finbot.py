@@ -40,7 +40,6 @@ class FinBot:
         receivers = msg.roomid
         self.sendTextMsg(content, receivers, msg.sender)
         """
-        content = msg.content if msg.type == 1 else ''
         if msg.type == 1 and msg.sender == WX_ID:
             parse_msg_self(msg.content, self.wcf)
         if msg.type == 49:
