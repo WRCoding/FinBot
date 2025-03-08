@@ -6,6 +6,7 @@ import re
 
 from config import APP_SECRET, APP_ID
 from feishu.table import FeishuTable
+from finbot import FinBot
 from util import date_util
 
 
@@ -24,7 +25,7 @@ class FinanceAnalyzer:
         pd.set_option('display.max_columns', None)  # 显示所有列
         pd.set_option('display.width', None)  # 设置显示宽度为无限制
         pd.set_option('display.max_colwidth', None)  # 设置列宽为无限制
-        
+        self.robot = FinBot()
         self.df = None
         if file_path:
             self.load_data(file_path)
@@ -167,3 +168,22 @@ class FinanceAnalyzer:
         
         return transactions
 
+    def chat_with_ai(self, content: str):
+        from ai.services.manager import AIManager
+        question = content.split(" ")[1]
+        ai_manager = AIManager()
+        sys_prompt = f'''
+        你是一名智能数据分析助理,能够根据用户的记账数据来回答用户的问题。
+                            1.今天的日期是: {date_util.get_date(format='%Y-%m-%d')}
+                            2.涉及到金额计算的,你应该多次验证,避免计算出错
+        '''
+        print(sys_prompt)
+        user_content = f'''
+        以下为记账数据 \n
+        {self.df}\n
+        问题: {question}
+        '''
+        print(user_content)
+        response = ai_manager.simple_chat(content=user_content, sys_prompt=sys_prompt, json_format=False)
+        self.robot.send_text_msg(response.content)
+        pass

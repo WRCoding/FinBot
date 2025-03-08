@@ -13,18 +13,18 @@ class DeepseekService(AIService):
 
     def get_response(self, messages, json_format: bool=True) -> ChatCompletion:
         try:
-            response = self.client.chat.completions.create(
-                model="deepseek-chat",
-                messages=messages,
-                max_tokens=1024,
-                temperature=1.0,
-                stream=False,
-                response_format={
-                    'type': 'json_object'
-                } if json_format else NotGiven,
-            )
-            # TODO: 实现Deepseek的API调用
-            # 这里需要根据实际的Deepseek API文档实现
+            params = {
+                "model": "deepseek-chat",
+                "messages": messages,
+                "max_tokens": 1024,
+                "temperature": 1.0,
+                "stream": False,
+            }
+            
+            if json_format:
+                params["response_format"] = {"type": "json_object"}
+            
+            response = self.client.chat.completions.create(**params)
             return response
         except Exception as e:
             print(f"Deepseek service error: {str(e)}")

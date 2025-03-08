@@ -25,7 +25,8 @@ class AIManager:
                 service = AIServiceFactory.get_service(self.preferred_provider)
                 return service.simple_chat(content, sys_prompt, json_format,  **kwargs)
             except Exception as e:
-                self.robot.send_text_msg(str(e))
+                if self.robot:
+                    self.robot.send_text_msg(str(e))
                 print(f"Error with preferred provider {self.preferred_provider}: {str(e)}")
         
         # 尝试所有可用的服务

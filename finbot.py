@@ -79,4 +79,7 @@ class FinBot:
             time.sleep(1)
 
     def send_text_msg(self, content: str) -> None:
-        self.wcf.send_text(content, WX_ID)
+        if self.wcf:
+            self.wcf.send_text(content, WX_ID)
+        else:
+            print('wcf没有初始化')
