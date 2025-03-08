@@ -45,9 +45,11 @@ def parse_msg_xml(content):
 
 
 def parse_msg_self(content: str, wcf: Wcf):
-    service = TransactionService()
     analyzer = FinanceAnalyzer()
     data = []
+    if content.startswith('@DS'):
+        analyzer.chat_with_ai(content)
+        return
     match content:
         # case '#全部数据':
         #     data = service.get_all_transactions(desc=False)
@@ -87,16 +89,16 @@ def parse_msg_self(content: str, wcf: Wcf):
                     transaction_lines.append(f"与前一日对比: {transaction['diff']}")
                 if 'remark' in transaction:
                     transaction_lines.append(f"备注: {transaction['remark']}")
-            else:
-                # 动态添加各字段信息
-                if hasattr(transaction, 'type') and transaction.type:
-                    transaction_lines.append(f"类型: {transaction.type}")
-                if hasattr(transaction, 'amount') and transaction.amount:
-                    transaction_lines.append(f"金额: {transaction.amount}")
-                if hasattr(transaction, 'transaction_time') and transaction.transaction_time:
-                    transaction_lines.append(f"时间: {transaction.transaction_time}")
-                if hasattr(transaction, 'remark') and transaction.remark:
-                    transaction_lines.append(f"备注: {transaction.remark}")
+            # else:
+            #     # 动态添加各字段信息
+            #     if hasattr(transaction, 'type') and transaction.type:
+            #         transaction_lines.append(f"类型: {transaction.type}")
+            #     if hasattr(transaction, 'amount') and transaction.amount:
+            #         transaction_lines.append(f"金额: {transaction.amount}")
+            #     if hasattr(transaction, 'transaction_time') and transaction.transaction_time:
+            #         transaction_lines.append(f"时间: {transaction.transaction_time}")
+            #     if hasattr(transaction, 'remark') and transaction.remark:
+            #         transaction_lines.append(f"备注: {transaction.remark}")
 
             # 添加分隔线
             transaction_lines.append("---------------------------------")
