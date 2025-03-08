@@ -5,7 +5,7 @@ from openai.types.chat import ChatCompletion
 from config import DEEP_SEEK
 from ..core.base import AIService, AIResponse
 from ..core.config import AIConfig
-from openai import OpenAI, NOT_GIVEN
+from openai import OpenAI, NotGiven
 
 
 class DeepseekService(AIService):
@@ -21,7 +21,7 @@ class DeepseekService(AIService):
                 stream=False,
                 response_format={
                     'type': 'json_object'
-                } if json_format else NOT_GIVEN,
+                } if json_format else NotGiven,
             )
             # TODO: 实现Deepseek的API调用
             # 这里需要根据实际的Deepseek API文档实现

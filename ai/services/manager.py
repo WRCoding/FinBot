@@ -3,11 +3,13 @@ from ..core.base import AIResponse
 from ..core.config import AIConfig
 from ..core.provider import AIProvider
 from .factory import AIServiceFactory
+from finbot import FinBot
 
 class AIManager:
     """AI服务管理器"""
     def __init__(self, preferred_provider: Optional[AIProvider] = AIProvider.DEEPSEEK):
         self.preferred_provider = preferred_provider
+        self.robot = FinBot()  # 获取 FinBot 单例
         
     def simple_chat(self, content: str, sys_prompt: str = AIConfig.get_system_prompt(), json_format: bool = True, **kwargs) -> AIResponse:
         """
@@ -23,6 +25,7 @@ class AIManager:
                 service = AIServiceFactory.get_service(self.preferred_provider)
                 return service.simple_chat(content, sys_prompt, json_format,  **kwargs)
             except Exception as e:
+                self.robot.send_text_msg(str(e))
                 print(f"Error with preferred provider {self.preferred_provider}: {str(e)}")
         
         # 尝试所有可用的服务
@@ -35,5 +38,5 @@ class AIManager:
                 print(f"Error with provider {provider}: {str(e)}")
                 last_error = e
                 continue
-        
+        self.robot.send_text_msg(str(last_error))
         raise RuntimeError(f"All AI services failed. Last error: {str(last_error)}") 

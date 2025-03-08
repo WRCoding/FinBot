@@ -16,12 +16,21 @@ from scheduler.task_manager import TaskManager
 
 
 class FinBot:
+    """财务机器人类"""
+    _instance = None
+    _initialized = False
 
-    def __init__(self, wcf: Wcf) -> None:
-        self.wcf = wcf
-        self.LOG = logging.getLogger("Robot")
-        self.wxid = self.wcf.get_self_wxid()
-        self.allContacts = self.getAllContacts()
+    def __new__(cls, wcf=None):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def __init__(self, wcf: Wcf = None) -> None:
+        if not self._initialized:
+            self.wcf = wcf
+            self.LOG = logging.getLogger("Robot")
+            self.wxid = self.wcf.get_self_wxid() if wcf else None
+            self._initialized = True
 
     def processMsg(self, msg: WxMsg) -> None:
         """当接收到消息的时候，会调用本方法。如果不实现本方法，则打印原始消息。
@@ -68,3 +77,6 @@ class FinBot:
         while True:
             schedule.run_pending()
             time.sleep(1)
+
+    def send_text_msg(self, content: str) -> None:
+        self.wcf.send_text(content, WX_ID)
