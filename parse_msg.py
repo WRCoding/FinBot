@@ -8,6 +8,7 @@ from analysis import FinanceAnalyzer
 from db.services import TransactionService
 from config import APP_ID, APP_SECRET, WX_ID
 from feishu.table import FeishuTable
+from util.common_util import find_project_root
 from util.date_util import get_date
 
 
@@ -22,7 +23,7 @@ def insert_feishu(values):
     table_sender.insert_data(values)
 
 def parse_video_msg(msg: WxMsg, wcf: Wcf):
-    print(wcf.get_audio_msg(id=msg.id, dir='./'))
+    print(wcf.get_audio_msg(id=msg.id, dir=f'{find_project_root()}/'))
     pass
 
 def parse_msg_xml(content):
