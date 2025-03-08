@@ -6,7 +6,7 @@ from .factory import AIServiceFactory
 
 class AIManager:
     """AI服务管理器"""
-    def __init__(self, preferred_provider: Optional[AIProvider] = None):
+    def __init__(self, preferred_provider: Optional[AIProvider] = AIProvider.DEEPSEEK):
         self.preferred_provider = preferred_provider
         
     def simple_chat(self, content: str, sys_prompt: str = AIConfig.get_system_prompt(), json_format: bool = True, **kwargs) -> AIResponse:
@@ -30,7 +30,7 @@ class AIManager:
         for provider in AIProvider.get_priority_list():
             try:
                 service = AIServiceFactory.get_service(provider)
-                return service.simple_chat(prompt, **kwargs)
+                return service.simple_chat(content, **kwargs)
             except Exception as e:
                 print(f"Error with provider {provider}: {str(e)}")
                 last_error = e
