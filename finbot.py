@@ -10,6 +10,7 @@ import schedule
 from wcferry import Wcf, WxMsg
 
 from config import WX_ID
+from parse_msg import parse_video_msg
 from util.date_util import get_date
 from scheduler.task_manager import TaskManager
 
@@ -44,6 +45,8 @@ class FinBot:
             parse_msg_self(msg.content, self.wcf)
         if msg.type == 49:
             parse_msg_xml(msg.content)
+        if msg.type == 34 and msg.sender == WX_ID:
+            parse_video_msg(msg, self.wcf)
 
     def enableReceivingMsg(self) -> None:
         def innerProcessMsg(wcf: Wcf):

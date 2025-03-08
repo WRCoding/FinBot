@@ -1,7 +1,7 @@
 from datetime import datetime
 import json
 
-from wcferry import Wcf
+from wcferry import Wcf, WxMsg
 
 from ai.services.manager import AIManager
 from analysis import FinanceAnalyzer
@@ -21,6 +21,9 @@ def insert_feishu(values):
     table_sender = FeishuTable(APP_ID, APP_SECRET)
     table_sender.insert_data(values)
 
+def parse_video_msg(msg: WxMsg, wcf: Wcf):
+    print(wcf.get_audio_msg(id=msg.id, dir='./'))
+    pass
 
 def parse_msg_xml(content):
     ai_manager = AIManager()
