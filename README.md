@@ -5,18 +5,25 @@ FinBot是一个基于微信机器人的个人财务管理助手，能够通过�
 ## 核心功能
 
 ### 1. 交易信息捕获与处理
-- 自动识别并解析微信中的银行交易提醒消息
+- 识别并解析微信中的银行交易提醒消息
 - 智能识别交易类型、金额、时间等关键信息
+<img width="621" alt="image" src="https://github.com/user-attachments/assets/db5c819c-b178-434d-b344-87de17ab41b3" />
+
 
 ### 2. 数据存储与管理
 - 本地SQLite数据库存储交易记录
 - 自动同步数据至飞书电子表格，便于远程访问和共享
+  <img width="731" alt="image" src="https://github.com/user-attachments/assets/0f523734-c60c-424b-a779-7e09192b3b8e" />
+
 
 ### 3. 财务分析与报告
 - 提供日常财务数据汇总与分析
 - 支持按日期查询交易记录
 - 生成每日收支汇总报告
 - 通过AI辅助分析财务数据及趋势
+<img width="657" alt="image" src="https://github.com/user-attachments/assets/8e38d2ce-c48a-4cf6-87f1-b86749b24dcf" />
+<img width="603" alt="image" src="https://github.com/user-attachments/assets/0eeb9831-4f3f-4b96-af4f-1934e23f3ff0" />
+
 
 ### 4. 多平台集成
 - 微信机器人实时接收并处理消息
