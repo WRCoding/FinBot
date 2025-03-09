@@ -28,11 +28,11 @@ FinBot是一个基于[WeChatFerry](https://github.com/lich0821/WeChatFerry)的�
   <img width="731" alt="image" src="https://github.com/user-attachments/assets/0f523734-c60c-424b-a779-7e09192b3b8e" />
 
 
-### 3. 财务分析与报告
-- 提供日常财务数据汇总与分析
+### 3. 交易数据分析
+- 提供日常交易数据汇总与分析
 - 支持按日期查询交易记录
 - 生成每日收支汇总报告
-- 通过AI辅助分析财务数据及趋势
+- 通过AI对话辅助分析交易数据及趋势
 <img width="657" alt="image" src="https://github.com/user-attachments/assets/8e38d2ce-c48a-4cf6-87f1-b86749b24dcf" />
 <img width="603" alt="image" src="https://github.com/user-attachments/assets/0eeb9831-4f3f-4b96-af4f-1934e23f3ff0" />
 
