@@ -10,7 +10,6 @@ import schedule
 from wcferry import Wcf, WxMsg
 
 from config import WX_ID
-from message_parser import MessageParser
 
 
 class FinBot:
@@ -31,6 +30,8 @@ class FinBot:
             self._initialized = True
 
     def processMsg(self, msg: WxMsg) -> None:
+        from message_parser import MessageParser
+
         msg_parser = MessageParser()
         """当接收到消息的时候，会调用本方法。如果不实现本方法，则打印原始消息。
         此处可进行自定义发送的内容,如通过 msg.content 关键字自动获取当前天气信息，并发送到对应的群组@发送者
