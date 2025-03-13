@@ -6,7 +6,6 @@ from analysis import FinanceAnalyzer
 from db.services import TransactionService
 from config import APP_ID, APP_SECRET, WX_ID
 from feishu.table import FeishuTable
-from finbot import FinBot
 from util.date_util import get_date
 
 
@@ -15,8 +14,7 @@ class MessageParser:
         self.analyzer = FinanceAnalyzer()
         self.service = TransactionService()
         self.feishu_table = FeishuTable(APP_ID, APP_SECRET)
-        self.finBot = FinBot()
-        
+
     def clean_text(self, text):
         """清理文本内容"""
         if text is None:
@@ -51,9 +49,10 @@ class MessageParser:
             return None
     
     def parse_msg_self(self, content: str):
+        from finbot import FinBot
         """解析自定义消息内容"""
         data = []
-        
+        finBot = FinBot()
         # 处理AI对话
         if content.startswith('@DS'):
             self.analyzer.chat_with_ai(content)
@@ -75,13 +74,13 @@ class MessageParser:
             
         # 检查数据是否为空
         if not data:
-            self.finBot.send_text_msg('没有数据')
+            finBot.send_text_msg('没有数据')
             return
     
         # 分批发送数据
-        self._send_batch_data(data)
+        self._send_batch_data(data, finBot)
     
-    def _send_batch_data(self, data):
+    def _send_batch_data(self, data, finBot):
         """分批发送数据"""
         batch_size = 3  # 每批包含的交易数量
         start_index = 0
@@ -96,7 +95,7 @@ class MessageParser:
                 batch_messages.append("\n".join(transaction_lines))
                 
             msg = "\n".join(batch_messages)
-            self.finBot.send_text_msg(msg)
+            finBot.send_text_msg(msg)
 
             # 更新start_index以指向下一个批次的起始位置
             start_index += batch_size

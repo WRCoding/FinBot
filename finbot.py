@@ -22,11 +22,12 @@ class FinBot:
             cls._instance = super().__new__(cls)
         return cls._instance
 
-    def __init__(self, wcf: Wcf = None) -> None:
+    def __init__(self) -> None:
         if not self._initialized:
-            self.wcf = wcf
+            print('FinBot.__init__()')
+            self.wcf = Wcf(debug=True)
             self.LOG = logging.getLogger("Robot")
-            self.wxid = self.wcf.get_self_wxid() if wcf else None
+            self.wxid = self.wcf.get_self_wxid() if self.wcf else None
             self._initialized = True
 
     def processMsg(self, msg: WxMsg) -> None:
@@ -90,3 +91,6 @@ class FinBot:
                 cnt += 1
         else:
             print('wcf没有初始化')
+
+    def clean(self):
+        self.wcf.cleanup()
