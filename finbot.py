@@ -11,8 +11,6 @@ from wcferry import Wcf, WxMsg
 
 from config import WX_ID
 from message_parser import MessageParser
-from util.date_util import get_date
-from scheduler.task_manager import TaskManager
 
 
 class FinBot:

@@ -1,9 +1,7 @@
 from datetime import datetime
 import json
 
-from wcferry import Wcf
 
-from ai.services.manager import AIManager
 from analysis import FinanceAnalyzer
 from db.services import TransactionService
 from config import APP_ID, APP_SECRET, WX_ID
@@ -14,7 +12,6 @@ from util.date_util import get_date
 
 class MessageParser:
     def __init__(self):
-        self.ai_manager = AIManager()
         self.analyzer = FinanceAnalyzer()
         self.service = TransactionService()
         self.feishu_table = FeishuTable(APP_ID, APP_SECRET)
@@ -31,9 +28,12 @@ class MessageParser:
         self.feishu_table.insert_data(values)
     
     def parse_msg_xml(self, content):
+        from ai.services.manager import AIManager
+
         """解析XML消息内容"""
         try:
-            response = self.ai_manager.simple_chat(content)
+            ai_manager = AIManager()
+            response = ai_manager.simple_chat(content)
             data = json.loads(response.content)
             print("response:", response.content)
             if data['publisher'] and data['publisher'].endswith('银行') and data['标题'] == '交易提醒':
