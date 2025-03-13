@@ -59,6 +59,8 @@ class FinBot:
 
         # print(f'消息类型: ${self.wcf.get_msg_types()}')
         self.wcf.enable_receiving_msg()
+
+
         Thread(target=innerProcessMsg, name="GetMessage", args=(self.wcf,), daemon=True).start()
 
     def getAllContacts(self) -> dict:
