@@ -20,7 +20,7 @@ def start_fin_bot():
         wcf.cleanup()  # 退出前清理环境
         exit(0)
 
-    task_manager.register_task(DailySummaryTask(wcf=wcf))
+    task_manager.register_task(DailySummaryTask())
     task_manager.register_task(UpdateCsvTask())
     signal.signal(signal.SIGINT, handler)
 
