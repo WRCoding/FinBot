@@ -1,6 +1,5 @@
 import signal
 
-from fastapi import FastAPI
 from wcferry import Wcf
 
 from db import init_db

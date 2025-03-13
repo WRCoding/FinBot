@@ -6,7 +6,6 @@ from queue import Empty
 from threading import Thread
 
 import schedule
-from fontTools.misc.cython import returns
 
 from wcferry import Wcf, WxMsg
 
