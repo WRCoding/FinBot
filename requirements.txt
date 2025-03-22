@@ -46,5 +46,5 @@ tzdata==2025.1
 tzlocal==5.3
 urllib3==2.3.0
 uvicorn==0.34.0
-wcferry==39.4.1.0
+wcferry==39.4.2.2
 websockets==15.0

@@ -6,7 +6,6 @@ import re
 
 from config import APP_SECRET, APP_ID
 from feishu.table import FeishuTable
-from finbot import FinBot
 from util import date_util
 
 
@@ -25,7 +24,6 @@ class FinanceAnalyzer:
         pd.set_option('display.max_columns', None)  # 显示所有列
         pd.set_option('display.width', None)  # 设置显示宽度为无限制
         pd.set_option('display.max_colwidth', None)  # 设置列宽为无限制
-        self.robot = FinBot()
         self.df = None
         if file_path:
             self.load_data(file_path)
@@ -170,6 +168,9 @@ class FinanceAnalyzer:
 
     def chat_with_ai(self, content: str):
         from ai.services.manager import AIManager
+        from finbot import FinBot
+
+        robot = FinBot()
         question = content.split(" ")[1]
         ai_manager = AIManager()
         sys_prompt = f'''
@@ -185,5 +186,5 @@ class FinanceAnalyzer:
         '''
         print(user_content)
         response = ai_manager.simple_chat(content=user_content, sys_prompt=sys_prompt, json_format=False)
-        self.robot.send_text_msg(response.content)
+        robot.send_text_msg(response.content)
         pass

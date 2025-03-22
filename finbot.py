@@ -10,8 +10,6 @@ import schedule
 from wcferry import Wcf, WxMsg
 
 from config import WX_ID
-from util.date_util import get_date
-from scheduler.task_manager import TaskManager
 
 
 class FinBot:
@@ -24,15 +22,18 @@ class FinBot:
             cls._instance = super().__new__(cls)
         return cls._instance
 
-    def __init__(self, wcf: Wcf = None) -> None:
+    def __init__(self) -> None:
         if not self._initialized:
-            self.wcf = wcf
+            print('FinBot.__init__()')
+            self.wcf = Wcf(debug=True)
             self.LOG = logging.getLogger("Robot")
-            self.wxid = self.wcf.get_self_wxid() if wcf else None
+            self.wxid = self.wcf.get_self_wxid() if self.wcf else None
             self._initialized = True
 
     def processMsg(self, msg: WxMsg) -> None:
-        from parse_msg import parse_msg_xml, parse_msg_self, parse_video_msg
+        from message_parser import MessageParser
+
+        msg_parser = MessageParser()
         """当接收到消息的时候，会调用本方法。如果不实现本方法，则打印原始消息。
         此处可进行自定义发送的内容,如通过 msg.content 关键字自动获取当前天气信息，并发送到对应的群组@发送者
         群号：msg.roomid  微信ID：msg.sender  消息内容：msg.content
@@ -41,11 +42,9 @@ class FinBot:
         self.sendTextMsg(content, receivers, msg.sender)
         """
         if msg.type == 1 and msg.sender == WX_ID:
-            parse_msg_self(msg.content, self.wcf)
+            msg_parser.parse_msg_self(msg.content)
         if msg.type == 49:
-            parse_msg_xml(msg.content)
-        if msg.type == 34 and msg.sender == WX_ID:
-            parse_video_msg(msg, self.wcf)
+            msg_parser.parse_msg_xml(msg.content)
 
     def enableReceivingMsg(self) -> None:
         def innerProcessMsg(wcf: Wcf):
@@ -61,6 +60,8 @@ class FinBot:
 
         # print(f'消息类型: ${self.wcf.get_msg_types()}')
         self.wcf.enable_receiving_msg()
+
+
         Thread(target=innerProcessMsg, name="GetMessage", args=(self.wcf,), daemon=True).start()
 
     def getAllContacts(self) -> dict:
@@ -79,8 +80,17 @@ class FinBot:
             schedule.run_pending()
             time.sleep(1)
 
-    def send_text_msg(self, content: str) -> None:
+    def send_text_msg(self, content: str, retry: int=3) -> None:
         if self.wcf:
-            self.wcf.send_text(content, WX_ID)
+            cnt = 0
+            while cnt < retry:
+                result = self.wcf.send_text(content, WX_ID)
+                if result == 0:
+                    return
+                time.sleep(1)
+                cnt += 1
         else:
             print('wcf没有初始化')
+
+    def clean(self):
+        self.wcf.cleanup()
