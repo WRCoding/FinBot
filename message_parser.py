@@ -63,9 +63,9 @@ class MessageParser:
             # case '#全部数据':
             #     data = self.service.get_all_transactions(desc=False)
             case '#昨日数据':
-                data = self.analyzer.get_date_transactions(date_str=get_date(-1))
+                data = self.analyzer.get_date_transactions(start_time=get_date(-1))
             case '#今日数据':
-                data = self.analyzer.get_date_transactions(date_str=get_date())
+                data = self.analyzer.get_date_transactions(start_time=get_date())
     
         # 处理汇总命令
         if content.startswith('#汇总@'):

@@ -118,34 +118,47 @@ class FinanceAnalyzer:
             "date": target_date.strftime('%Y-%m-%d')
         }]
     
-    def get_date_transactions(self, date_str: str = None) -> List[dict]:
+    def get_date_transactions(self, start_time: str = None, end_time: str = None) -> List[dict]:
         """
-        获取指定日期的所有交易数据
+        获取指定日期范围内的所有交易数据
         
         参数:
-            date_str (str, optional): 指定日期，格式为'YYYYMMDD'，例如'20250301'。如果不指定，则使用昨天的日期。
+            start_time (str, optional): 开始日期，格式为'YYYYMMDD'，例如'20250301'。如果不指定，则使用当天的日期。
+            end_time (str, optional): 结束日期，格式为'YYYYMMDD'，例如'20250305'。如果不指定，则只查询开始日期的数据。
         
         返回:
-            List[dict]: 包含指定日期所有交易记录的字典列表
+            List[dict]: 包含指定日期范围内所有交易记录的字典列表
         """
         if self.df is None:
             return []
-        
-        # 处理日期
-        if date_str:
-            try:
-                target_date = pd.to_datetime(date_str, format='%Y%m%d').date()
-            except ValueError:
-                return [{"error": "日期格式错误，请使用'YYYYMMDD'格式，例如'20250301'"}]
-        else:
-            target_date = pd.Timestamp.now().date()
         
         # 确保日期列存在
         if '日期' not in self.df.columns:
             self.df['日期'] = self.df['时间'].dt.date
         
-        # 获取目标日期的数据
-        target_data = self.df[self.df['日期'] == target_date]
+        # 处理开始日期
+        if start_time:
+            try:
+                start_date = pd.to_datetime(start_time, format='%Y%m%d').date()
+            except ValueError:
+                return [{"error": "开始日期格式错误，请使用'YYYYMMDD'格式，例如'20250301'"}]
+        else:
+            start_date = pd.Timestamp.now().date()
+        
+        # 处理结束日期
+        if end_time:
+            try:
+                end_date = pd.to_datetime(end_time, format='%Y%m%d').date()
+                if end_date < start_date:
+                    return [{"error": "结束日期不能早于开始日期"}]
+            except ValueError:
+                return [{"error": "结束日期格式错误，请使用'YYYYMMDD'格式，例如'20250305'"}]
+            
+            # 获取日期范围内的数据
+            target_data = self.df[(self.df['日期'] >= start_date) & (self.df['日期'] <= end_date)]
+        else:
+            # 如果没有指定结束日期，则只查询开始日期的数据
+            target_data = self.df[self.df['日期'] == start_date]
         
         # 如果没有数据，返回空列表
         if target_data.empty:
@@ -168,23 +181,33 @@ class FinanceAnalyzer:
 
     def chat_with_ai(self, content: str):
         from ai.services.manager import AIManager
-        from finbot import FinBot
+        from ai.providers.claude_service import ClaudeService
+        # from finbot import FinBot
 
-        robot = FinBot()
+        # robot = FinBot()
         question = content.split(" ")[1]
-        ai_manager = AIManager()
+        
+        # 实例化Claude服务
+        claude_service = ClaudeService()
+        
+        # 注册工具回调函数
+        claude_service.register_tool_callback("get_date_transactions", self.get_date_transactions, ['start_time', 'end_time'])
         sys_prompt = f'''
-        你是一名智能数据分析助理,能够根据用户的记账数据来回答用户的问题。
+        你是一名智能数据分析助理,能够根据用户的交易数据来回答用户的问题。
                             1.今天的日期是: {date_util.get_date(format='%Y-%m-%d')}
                             2.涉及到金额计算的,你应该多次验证,避免计算出错
+                            3.同时规定每周一为一个星期的开始,每周日为一个星期的结束
+                            4.你可以通过tools来获取记账数据
+                            5.最后结果不需要把每条数据都罗列出来
         '''
-        print(sys_prompt)
-        user_content = f'''
-        以下为记账数据 \n
-        {self.df}\n
-        问题: {question}
-        '''
-        print(user_content)
-        response = ai_manager.simple_chat(content=user_content, sys_prompt=sys_prompt, json_format=False)
-        robot.send_text_msg(response.content)
-        pass
+
+        
+        # 使用complex_chat方法进行对话，该方法支持工具调用
+        response = claude_service.complex_chat(query=question, sys_prompt=sys_prompt)
+        print(response)
+        # 发送响应
+        # robot.send_text_msg(response.content)
+
+if __name__ == '__main__':
+    a = FinanceAnalyzer()
+    a.chat_with_ai("DS 前两天花费了多少钱")
