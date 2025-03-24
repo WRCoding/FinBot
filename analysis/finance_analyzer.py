@@ -179,13 +179,12 @@ class FinanceAnalyzer:
         
         return transactions
 
-    def chat_with_ai(self, content: str):
+    def chat_with_ai(self, question: str):
         from ai.services.manager import AIManager
         from ai.providers.claude_service import ClaudeService
-        # from finbot import FinBot
+        from finbot import FinBot
 
-        # robot = FinBot()
-        question = content.split(" ")[1]
+        robot = FinBot()
         
         # 实例化Claude服务
         claude_service = ClaudeService()
@@ -203,10 +202,10 @@ class FinanceAnalyzer:
 
         
         # 使用complex_chat方法进行对话，该方法支持工具调用
-        response = claude_service.complex_chat(query=question, sys_prompt=sys_prompt)
+        response = claude_service.chat(query=question, sys_prompt=sys_prompt)
         print(response)
         # 发送响应
-        # robot.send_text_msg(response.content)
+        robot.send_text_msg(response.content)
 
 if __name__ == '__main__':
     a = FinanceAnalyzer()

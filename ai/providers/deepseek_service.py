@@ -35,8 +35,8 @@ class DeepseekService(AIService):
         self.api_key = DEEP_SEEK
         self.client = OpenAI(api_key=self.api_key, base_url="https://api.deepseek.com")
 
-    def simple_chat(self, content: str, sys_prompt: str = AIConfig.get_system_prompt(),
-                    json_format: bool=True,  **kwargs) -> AIResponse:
+    def chat(self, content: str, sys_prompt: str = AIConfig.get_system_prompt(),
+             json_format: bool=True, **kwargs) -> AIResponse:
         if not self.is_available():
             raise RuntimeError("Deepseek API key not found")
 

@@ -55,7 +55,7 @@ class MessageParser:
         finBot = FinBot()
         # 处理AI对话
         if content.startswith('@DS'):
-            self.analyzer.chat_with_ai(content)
+            self.analyzer.chat_with_ai(content.split(" ")[1])
             return
         
         # 处理命令匹配

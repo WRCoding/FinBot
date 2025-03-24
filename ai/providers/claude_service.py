@@ -15,10 +15,6 @@ class ClaudeService(AIService):
         self.client = anthropic.Anthropic(base_url="https://openai.api2d.net", api_key=self.api_key)
         self.tool_callbacks = {}  # 用于存储工具回调函数
 
-    def simple_chat(self, content: str, sys_prompt: str = AIConfig.get_system_prompt(), json_format: bool = True,
-                    **kwargs) -> AIResponse:
-        pass
-
     def register_tool_callback(self, tool_name: str, callback: Callable, params: List[str]):
         """
         注册工具回调函数
@@ -29,7 +25,8 @@ class ClaudeService(AIService):
         """
         self.tool_callbacks[tool_name] = {'method': callback, 'params': params}
 
-    def complex_chat(self, query: str, sys_prompt: str = AIConfig.get_system_prompt(), json_format: bool = True):
+    def chat(self, query: str, sys_prompt: str = AIConfig.get_system_prompt(), json_format: bool = True,
+             **kwargs) -> AIResponse:
         tool_list = [
             {
                 "name": "get_date_transactions",
@@ -93,7 +90,7 @@ class ClaudeService(AIService):
                     system=sys_prompt,
                     messages=messages
                 )
-            return response.content[0].text
+            return AIResponse(content=response.content[0].text, raw_response=response)
 
     def is_available(self) -> bool:
         pass

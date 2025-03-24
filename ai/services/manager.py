@@ -23,7 +23,7 @@ class AIManager:
         if self.preferred_provider:
             try:
                 service = AIServiceFactory.get_service(self.preferred_provider)
-                return service.simple_chat(content, sys_prompt, json_format,  **kwargs)
+                return service.chat(content, sys_prompt, json_format, **kwargs)
             except Exception as e:
                 if self.robot:
                     self.robot.send_text_msg(str(e))
@@ -34,7 +34,7 @@ class AIManager:
         for provider in AIProvider.get_priority_list():
             try:
                 service = AIServiceFactory.get_service(provider)
-                return service.simple_chat(content, **kwargs)
+                return service.chat(content, **kwargs)
             except Exception as e:
                 print(f"Error with provider {provider}: {str(e)}")
                 last_error = e
