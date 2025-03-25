@@ -50,7 +50,7 @@ class MessageParser:
             return None
     
     def parse_msg_self(self, content: str):
-        if content.startswith('#') is False or content.startswith('@') is False:
+        if content.startswith('#') is False and content.startswith('@AI') is False:
             return
         from finbot import FinBot
         """解析自定义消息内容"""
