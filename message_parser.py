@@ -27,9 +27,10 @@ class MessageParser:
     
     def parse_msg_xml(self, content):
         from ai.services.manager import AIManager
-
         """解析XML消息内容"""
         try:
+            with open('./msg.xml', 'a+', encoding='utf-8') as f:
+                f.write(content + '\n')
             ai_manager = AIManager()
             response = ai_manager.simple_chat(content)
             data = json.loads(response.content)
@@ -49,12 +50,14 @@ class MessageParser:
             return None
     
     def parse_msg_self(self, content: str):
+        if content.startswith('#') is False or content.startswith('@') is False:
+            return
         from finbot import FinBot
         """解析自定义消息内容"""
         data = []
         finBot = FinBot()
         # 处理AI对话
-        if content.startswith('@DS'):
+        if content.startswith('@AI'):
             self.analyzer.chat_with_ai(content.split(" ")[1])
             return
         
@@ -144,6 +147,5 @@ class MessageParser:
 #     parser.parse_msg_self(content, wcf)
 
 # if __name__ == '__main__':
-#     with open('msg.xml', mode='r', encoding='utf-8') as f:
-#         file_content = f.read()
-#     parse_msg_xml(file_content)
+#     with open('msg.xml', mode='a+', encoding='utf-8') as f:
+#         f.write('\n' + 'dddddd')
