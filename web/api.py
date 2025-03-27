@@ -13,7 +13,8 @@ sys.path.append(BASE_DIR)
 
 from config import HOST, PORT
 class Item(BaseModel):
-    msg: str
+    remark: str
+    msg:str
 
 
 app = FastAPI()
@@ -21,7 +22,7 @@ app = FastAPI()
 
 @app.post("/send/msg/")
 def create_item(item: Item):
-    print(item.msg)
+    print(f'remark: {item.remark}, msg: {item.msg}')
 
 @app.get("/")
 def read_root():
