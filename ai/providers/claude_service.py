@@ -18,7 +18,7 @@ class ClaudeService(AIService):
     def register_tool_callback(self, tool_name: str, callback: Callable, params: List[str]):
         """
         注册工具回调函数
-        
+
         参数:
             tool_name (str): 工具名称
             callback (Callable): 回调函数
@@ -57,13 +57,14 @@ class ClaudeService(AIService):
             system=sys_prompt,
             messages=messages
         )
+        print(f'response: {response}')
         if response.stop_reason == "tool_use":
             messages.append({"role": "assistant", "content": response.content})
             tool_use = response.content[-1]
             tool_name = tool_use.name
             tool_input = tool_use.input
             print(f'tool_name: {tool_name}, tool_input: {tool_input}')
-            
+
             # 调用相应的回调函数处理工具请求
             if tool_name in self.tool_callbacks:
                 func = self.tool_callbacks[tool_name]['method']
@@ -78,7 +79,7 @@ class ClaudeService(AIService):
                         {
                             "type": "tool_result",
                             "tool_use_id": tool_use.id,
-                            "content": f'交易数据如下: {result}'
+                            "content": f'交易数据如下,请结合所给的数据进行分析回答: {result}'
                         }
                     ]
                 }

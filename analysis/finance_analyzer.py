@@ -127,7 +127,7 @@ class FinanceAnalyzer:
             end_time (str, optional): 结束日期，格式为'YYYYMMDD'，例如'20250305'。如果不指定，则只查询开始日期的数据。
         
         返回:
-            List[dict]: 包含指定日期范围内所有交易记录的字典列表
+            List[dict]: 包含指定日期范围内所有交易记录的字典列表，以及按类型统计的总额。当数据超过20条时，只返回汇总信息。
         """
         if self.df is None:
             return []
@@ -167,7 +167,25 @@ class FinanceAnalyzer:
         # 按时间排序（从早到晚）
         target_data = target_data.sort_values(by='时间')
         
-        # 将数据转换为字典列表
+        # 计算按类型统计的总额
+        type_summary = target_data.groupby('类型')['金额'].agg(['sum', 'count']).round(2)
+        summary = []
+        for type_name, row in type_summary.iterrows():
+            summary.append({
+                "type": type_name,
+                "total_amount": f"{row['sum']:.2f}",
+                "transaction_count": int(row['count'])
+            })
+        
+        # 如果数据超过20条，只返回汇总信息
+        if len(target_data) > 20:
+            return [{
+                "summary": summary,
+                "total_transactions": len(target_data),
+                "message": "数据量较大，仅显示汇总信息"
+            }]
+        
+        # 数据量不超过20条时，返回详细交易记录和汇总信息
         transactions = []
         for _, row in target_data.iterrows():
             transactions.append({
@@ -177,20 +195,31 @@ class FinanceAnalyzer:
                 "remark": row['备注'] if '备注' in row else ""
             })
         
+        # 添加汇总信息到返回结果中
+        transactions.append({
+            "summary": summary,
+            "total_transactions": len(target_data)
+        })
+        print(transactions)
         return transactions
+
+    
 
     def chat_with_ai(self, question: str):
         from ai.services.manager import AIManager
         from ai.providers.claude_service import ClaudeService
-        from finbot import FinBot
+        from ai.providers.deepseek_service import DeepseekService
 
-        robot = FinBot()
+        # from finbot import FinBot
+        #
+        # robot = FinBot()
         
         # 实例化Claude服务
         claude_service = ClaudeService()
-        
+        ds_service = DeepseekService()
         # 注册工具回调函数
         claude_service.register_tool_callback("get_date_transactions", self.get_date_transactions, ['start_time', 'end_time'])
+        ds_service.register_tool_callback("get_date_transactions", self.get_date_transactions, ['start_time', 'end_time'])
         sys_prompt = f'''
         你是一名智能数据分析助理,能够根据用户的交易数据来回答用户的问题。
                             1.今天的日期是: {date_util.get_date(format='%Y-%m-%d')}
@@ -203,11 +232,12 @@ class FinanceAnalyzer:
 
         
         # 使用complex_chat方法进行对话，该方法支持工具调用
+        # response = ds_service.chat(query=question, sys_prompt=sys_prompt, json_format=False)
         response = claude_service.chat(query=question, sys_prompt=sys_prompt)
-        print(response)
+        print(response.content)
         # 发送响应
-        robot.send_text_msg(response.content)
+        # robot.send_text_msg(response.content)
 
 if __name__ == '__main__':
     a = FinanceAnalyzer()
-    a.chat_with_ai("DS 前两天花费了多少钱")
+    a.chat_with_ai("前三天花费了多少钱")
