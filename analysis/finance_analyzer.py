@@ -1,3 +1,4 @@
+import json
 from typing import List
 
 import pandas as pd
@@ -189,7 +190,7 @@ class FinanceAnalyzer:
         transactions = []
         for _, row in target_data.iterrows():
             transactions.append({
-                "date": row['时间'],
+                "date": row['时间'].strftime('%Y-%m-%d %H:%M:%S'),
                 "type": row['类型'],
                 "amount": f"{row['金额']:.2f}",
                 "remark": row['备注'] if '备注' in row else ""
@@ -241,3 +242,4 @@ class FinanceAnalyzer:
 if __name__ == '__main__':
     a = FinanceAnalyzer()
     a.chat_with_ai("前三天花费了多少钱")
+    # a.get_date_transactions(start_time='20250326')

@@ -10,7 +10,8 @@ from lark_oapi.api.drive.v1 import *
 from lark_oapi.api.sheets.v3 import GetSpreadsheetRequest, GetSpreadsheetResponse, QuerySpreadsheetSheetRequest, \
     QuerySpreadsheetSheetResponse
 
-from config import SHEET_TOKEN, WORK_TABLE
+import config
+from config import SHEET_TOKEN, WORK_TABLE, CSV_PATH
 from util.common_util import find_project_root
 
 
@@ -30,6 +31,8 @@ class FeishuTable:
         self.base_url = f"https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{token}/values_prepend"
         self._access_token = None
         self.sheet_token = token
+        self.table_name = None
+        self.sheet_name = None
         self.client = lark.Client.builder() \
             .app_id(app_id) \
             .app_secret(app_secret) \
@@ -87,6 +90,8 @@ class FeishuTable:
         return response.json()
 
     def get_table_name(self) -> Optional[str]:
+        if self.table_name:
+            return self.table_name
         # 构造请求对象
         request: GetSpreadsheetRequest = GetSpreadsheetRequest.builder() \
             .spreadsheet_token(self.sheet_token) \
@@ -103,9 +108,12 @@ class FeishuTable:
             return None
 
         # 处理业务结果
-        return response.data.spreadsheet.title
+        self.table_name = response.data.spreadsheet.title
+        return self.table_name
 
     def get_sheet_name(self) -> Optional[str]:
+        if self.sheet_name:
+            return self.sheet_name
         # 构造请求对象
         request: QuerySpreadsheetSheetRequest = QuerySpreadsheetSheetRequest.builder() \
             .spreadsheet_token(self.sheet_token) \
@@ -113,7 +121,8 @@ class FeishuTable:
 
         # 发起请求
         response: QuerySpreadsheetSheetResponse = self.client.sheets.v3.spreadsheet_sheet.query(request)
-        return response.data.sheets[0].title
+        self.sheet_name = response.data.sheets[0].title
+        return self.sheet_name
 
     def async_export_table(self):
         thread = threading.Thread(target=self.export_table)
@@ -194,4 +203,7 @@ class FeishuTable:
         pass
 
     def get_file_path(self):
-        return f'{find_project_root()}/{self.get_table_name()}-{self.get_sheet_name()}.csv'
+        if str(CSV_PATH) != '':
+            return str(CSV_PATH)
+        config.CSV_PATH = f'{find_project_root()}/{self.get_table_name()}-{self.get_sheet_name()}.csv'
+        return config.CSV_PATH
