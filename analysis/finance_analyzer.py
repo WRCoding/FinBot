@@ -220,7 +220,7 @@ class FinanceAnalyzer:
         ds_service = DeepseekService()
         # 注册工具回调函数
         claude_service.register_tool_callback("get_date_transactions", self.get_date_transactions, ['start_time', 'end_time'])
-        ds_service.register_tool_callback("get_date_transactions", self.get_date_transactions, ['start_time', 'end_time'])
+        # ds_service.register_tool_callback("get_date_transactions", self.get_date_transactions, ['start_time', 'end_time'])
         sys_prompt = f'''
         你是一名智能数据分析助理,能够根据用户的交易数据来回答用户的问题。
                             1.今天的日期是: {date_util.get_date(format='%Y-%m-%d')}

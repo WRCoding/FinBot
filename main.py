@@ -8,15 +8,18 @@ from feishu import start_feishu_bot
 from scheduler.jobs.daily_summary_task import DailySummaryTask
 from scheduler.jobs.update_csv_task import UpdateCsvTask
 from scheduler.task_manager import TaskManager
+from web.api import start_web
 
 init_db()
 start_feishu_bot()
 def start_fin_bot():
     robot = FinBot()
     task_manager = TaskManager()
+    server = start_web()
     def handler(sig, frame):
         task_manager.shutdown()
         robot.clean()
+        server.shutdown()
         exit(0)
 
     task_manager.register_task(DailySummaryTask())

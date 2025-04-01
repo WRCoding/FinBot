@@ -1,13 +1,12 @@
 import json
-from pyexpat.errors import messages
 from typing import List, Callable
 
+from openai import OpenAI
 from openai.types.chat import ChatCompletion
 
 from config import DEEP_SEEK
 from ..core.base import AIService, AIResponse
 from ..core.config import AIConfig
-from openai import OpenAI, NotGiven
 
 
 class DeepseekService(AIService):

@@ -14,7 +14,7 @@ class ClaudeService(AIService):
 
     def __init__(self):
         self.api_key = CLAUDE
-        self.client = anthropic.Anthropic(base_url="https://oa.api2d.net", api_key=self.api_key)
+        self.client = anthropic.Anthropic(base_url= 'https://openai.api2d.net', api_key=self.api_key)
         self.tool_callbacks = {}  # 用于存储工具回调函数
 
     def register_tool_callback(self, tool_name: str, callback: Callable, params: List[str]):
@@ -53,7 +53,7 @@ class ClaudeService(AIService):
         # You have access to tools, but only use them when necessary. If a tool is not required, respond as normal
         messages = [{"role": "user", "content": query}]
         response = self.client.messages.create(
-            model="claude-3-sonnet-20240229",
+            model="claude-3-7-sonnet-20250219",
             max_tokens=1024,
             tools=tool_list,
             system=sys_prompt,
@@ -81,7 +81,7 @@ class ClaudeService(AIService):
                         {
                             "type": "tool_result",
                             "tool_use_id": tool_use.id,
-                            "content": f'交易数据如下,请结合所给的数据进行分析回答: 100'
+                            "content": f'交易数据如下,请结合所给的数据进行分析回答: {result}'
                         }
                     ]
                 }
@@ -89,13 +89,14 @@ class ClaudeService(AIService):
 
                 print(f'messages: {messages[1]}')
                 response = self.client.messages.create(
-                    model="claude-3-sonnet-20240229",
+                    model="claude-3-7-sonnet-20250219",
                     max_tokens=1024,
                     tools=tool_list,
                     system=sys_prompt,
                     messages=messages
                 )
             return AIResponse(content=response.content[0].text, raw_response=response)
+        return AIResponse(content=response.content[0].text, raw_response=response)
 
     def is_available(self) -> bool:
         pass
