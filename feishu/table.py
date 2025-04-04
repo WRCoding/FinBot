@@ -203,7 +203,4 @@ class FeishuTable:
         pass
 
     def get_file_path(self):
-        if str(CSV_PATH) != '':
-            return str(CSV_PATH)
-        config.CSV_PATH = f'{find_project_root()}/{self.get_table_name()}-{self.get_sheet_name()}.csv'
-        return config.CSV_PATH
+        return f'{find_project_root()}/{self.get_table_name()}-{self.get_sheet_name()}.csv'

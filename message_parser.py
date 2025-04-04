@@ -41,12 +41,10 @@ class MessageParser:
         from ai.services.manager import AIManager
         """解析XML消息内容"""
         try:
-            with open('./msg.xml', 'a+', encoding='utf-8') as f:
-                f.write(content + '\n')
             ai_manager = AIManager()
             response = ai_manager.simple_chat(content)
             data = json.loads(response.content)
-            # print("response:", response.content)
+            print("response:", response.content)
             if data['publisher'] and data['publisher'].endswith('银行') and data['标题'] == '交易提醒':
                 data['transaction_time'] = datetime.now().strftime('%Y年%m月%d日 %H:%M:%S')
                 data.pop('标题')
@@ -62,7 +60,6 @@ class MessageParser:
             return None
 
     def parse_msg_web(self, web_msg: WebMsg):
-        print(f'remark: {web_msg.remark}, msg: {web_msg.msg}')
         content = web_msg.msg
         if web_msg.remark and ',' in web_msg.remark:
             trans_type = web_msg.remark.split(',')[0]

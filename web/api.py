@@ -1,4 +1,5 @@
 import os
+import threading
 
 from fastapi import FastAPI
 import sys
@@ -15,9 +16,6 @@ sys.path.append(BASE_DIR)
 
 from config import HOST, PORT
 
-
-
-
 app = FastAPI()
 
 
@@ -31,19 +29,25 @@ def create_item(web_msg: WebMsg):
 def read_root():
     return {"Hello": "World"}
 
-def start_web() -> Server:
+
+def _app_client_thread():
     import uvicorn
     config = uvicorn.Config(app, host=HOST, port=PORT)
     server = uvicorn.Server(config)
     server.run()
     return server
-    # server.shutdown()
 
+
+def start_web():
+    ws_thread = threading.Thread(target=_app_client_thread, name="feishu_ws_client")
+    ws_thread.daemon = True  # 设置为守护线程，这样主程序退出时，WebSocket 客户端也会退出
+    ws_thread.start()
+    return ws_thread
 
 # if __name__ == "__main__":
-    # import uvicorn
-    #
-    # config = uvicorn.Config(app, host=HOST, port=PORT)
-    # server = uvicorn.Server(config)
-    # server.run()
-    # # server.shutdown()
+# import uvicorn
+#
+# config = uvicorn.Config(app, host=HOST, port=PORT)
+# server = uvicorn.Server(config)
+# server.run()
+# # server.shutdown()
